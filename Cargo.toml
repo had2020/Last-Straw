@@ -1,6 +1,18 @@
 [package]
-name = "Last-Straw"
-version = "0.1.0"
+name = "laststraw"
+version = "0.0.1"
 edition = "2021"
+authors = ["Hadrian Lazic"]
+
+[lib]
+path = "src/lib.rs"
 
 [dependencies]
+glfw = "0.59.0"
+
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
