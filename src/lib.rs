@@ -1,5 +1,8 @@
 //!  comments item containing the comment
-pub use glfw;
+
+// cargo test
+// doc gen cargo doc --open
+
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
@@ -15,18 +18,16 @@ mod tests {
     }
 }
 
-// the three is in markdown
-// cargo test
-// doc gen cargo doc --open
-/// simple hello world print
-///
-///# Examples
-///```rust
-///let arg = 2;
-///let result = laststraw::yol_t(arg);
-///assert_eq!(3, result);
-///```
-pub fn yol_t(x: f32) -> f32{
-    let b = x + 1.0_f32;
-    b
+use glfw::{Action, Context, MouseButton, fail_on_errors};
+
+pub fn defined_window( width: u32, height: u32, name: &str) -> Option<(glfw::PWindow, glfw::GlfwReceiver<(f64, glfw::WindowEvent)>)> {
+    let mut glfw = glfw::init(fail_on_errors).expect("Failed to initialize GLFW");
+
+    let (mut window, events) = glfw.create_window(width, height, name, glfw::WindowMode::Windowed)
+        .expect("Failed to create GLFW window, with defined_window method.");
+
+    window.make_current();
+    window.set_key_polling(true);
+
+    Some((window, events))
 }
