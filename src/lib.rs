@@ -18,7 +18,7 @@ mod tests {
     }
 }
 
-use glfw::{Action, Context, MouseButton, fail_on_errors};
+use glfw::{fail_on_errors, Action, Context, Glfw, MouseButton};
 
 pub fn defined_window( width: u32, height: u32, name: &str) -> Option<(glfw::PWindow, glfw::GlfwReceiver<(f64, glfw::WindowEvent)>)> {
     let mut glfw = glfw::init(fail_on_errors).expect("Failed to initialize GLFW");
@@ -30,4 +30,9 @@ pub fn defined_window( width: u32, height: u32, name: &str) -> Option<(glfw::PWi
     window.set_key_polling(true);
 
     Some((window, events))
+}
+
+pub fn application_flow() -> Glfw {
+    use glfw::fail_on_errors;
+    glfw::init(fail_on_errors!()).unwrap()
 }
