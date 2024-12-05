@@ -18,7 +18,7 @@ mod tests {
     }
 }
 
-use glfw::{fail_on_errors, Action, Context, Glfw, MouseButton};
+use glfw::{fail_on_errors, Action, Context, Glfw, GlfwReceiver, MouseButton, PWindow, WindowEvent, Key};
 
 pub fn defined_window( width: u32, height: u32, name: &str) -> Option<(glfw::PWindow, glfw::GlfwReceiver<(f64, glfw::WindowEvent)>)> {
     let mut glfw = glfw::init(fail_on_errors).expect("Failed to initialize GLFW");
@@ -35,4 +35,25 @@ pub fn defined_window( width: u32, height: u32, name: &str) -> Option<(glfw::PWi
 pub fn application_flow() -> Glfw {
     use glfw::fail_on_errors;
     glfw::init(fail_on_errors!()).unwrap()
+}
+
+pub fn apploop(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) {
+    let mut window = pwindow;
+    let mut flow = aflow;
+    while !window.should_close() {
+        // buffering frames
+        window.swap_buffers();
+
+        // event handling input 
+        flow.poll_events();
+        for (_, event) in glfw::flush_messages(&events) {
+            println!("{:?}", event);
+            match event {
+                glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => { // input esc
+                    window.set_should_close(true)
+                },
+                _ => {},
+            }
+        }
+    }
 }
