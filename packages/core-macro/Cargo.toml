@@ -1,16 +1,16 @@
 [package]
-name = "laststraw"
-version = "0.0.1"
+name = "laststraw-core-macro"
+version = "0.1.0"
 edition = "2021"
 authors = ["Hadrian Lazic"]
 
 [lib]
 path = "src/lib.rs"
-#proc-macro = true
+proc-macro = true
 
 [dependencies]
 glfw = "0.59.0"
-
+laststraw-core= { path = "../core" }
 
 [profile.dev]
 opt-level = 1
