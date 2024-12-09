@@ -6,6 +6,7 @@ authors = ["Hadrian Lazic"]
 
 [lib]
 path = "src/lib.rs"
+#proc-macro = true
 
 [dependencies]
 glfw = "0.59.0"

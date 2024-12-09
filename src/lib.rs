@@ -29,15 +29,15 @@ pub fn defined_window( width: u32, height: u32, name: &str) -> Option<(glfw::PWi
     window.make_current();
     window.set_key_polling(true);
 
-    Some((window, events))
+    Some((window, events)) 
 }
 
-pub fn application_flow() -> Glfw {
+pub fn error_init() -> Glfw {
     use glfw::fail_on_errors;
     glfw::init(fail_on_errors!()).unwrap()
 }
 
-pub fn apploop(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) {
+pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) {
     let mut window = pwindow;
     let mut flow = aflow;
     while !window.should_close() {
@@ -57,3 +57,30 @@ pub fn apploop(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow
         }
     }
 }
+
+pub fn app_running(pwindow: PWindow) -> bool{
+    if !pwindow.should_close() {
+        true
+    } else {
+        false
+    }
+}
+
+//extern crate proc_macro;
+//use proc_macro::TokenStream;
+
+/* 
+pub fn apploop(input: TokenStream) -> TokenStream {
+    //input as a block of code
+    let block: Block = parse_macro_input!(input as Block);
+
+    //while loop wrapping code
+    let expanded = quote! {
+        while true {
+            #block
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+*/
