@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    #"packages/*" 
+    "packages/core",
+    "packages/core-macro"
+]
+
+[workspace.dependencies]
+glfw = "0.59.0"

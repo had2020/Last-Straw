@@ -3,6 +3,7 @@
 // cargo test
 // doc gen cargo doc --open
 
+/*  TODO add tests like this!
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
@@ -17,6 +18,7 @@ mod tests {
         assert_eq!(result, 4);
     }
 }
+ */
 
 use glfw::{fail_on_errors, Action, Context, Glfw, GlfwReceiver, MouseButton, PWindow, WindowEvent, Key};
 

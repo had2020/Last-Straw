@@ -9,7 +9,6 @@ path = "src/lib.rs"
 proc-macro = true
 
 [dependencies]
-glfw = "0.59.0"
 laststraw-core= { path = "../core" }
 
 [profile.dev]
