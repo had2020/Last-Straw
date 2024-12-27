@@ -39,7 +39,7 @@ pub fn error_init() -> Glfw {
     glfw::init(fail_on_errors!()).unwrap()
 }
 
-pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) {
+pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) { // TODO replace with block in core-macro
     let mut window = pwindow;
     let mut flow = aflow;
     while !window.should_close() {

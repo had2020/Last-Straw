@@ -1,9 +1,39 @@
-[workspace]
+[workspace] # Not useful 
 members = [
+    "example-project",
     #"packages/*" 
     "packages/core",
     "packages/core-macro"
+    #"laststrawcore",
+    #"laststraw-core-macro"
+
 ]
 
-[workspace.dependencies]
+[workspace.dependencies] # Not useful 
+laststraw-core= { path = "packages/core" }
+laststraw-core-macro= { path = "packages/core-macro" }
+
+[dependencies]
+laststraw-core= { path = "packages/core" }
+laststraw-core-macro= { path = "packages/core-macro" }
+
+# External
 glfw = "0.59.0"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
+
+[workspace.package]
+version = "0.0.1"
+
+[lib]
+path = "src/lib.rs"
+
+[package]
+name = "laststraw"
+version = "0.1.0"
+edition = "2021"
+authors = ["Hadrian Lazic"]
