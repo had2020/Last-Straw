@@ -10,6 +10,7 @@ path = "src/lib.rs"
 
 [dependencies]
 glfw = "0.59.0"
+laststraw-core-macro= { path = "packages/core-macro" }
 
 
 [profile.dev]
