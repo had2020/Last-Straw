@@ -22,6 +22,8 @@ mod tests {
 
 use glfw::{fail_on_errors, Action, Context, Glfw, GlfwReceiver, MouseButton, PWindow, WindowEvent, Key};
 
+// TODO at some point write some amazing documentation for everything
+
 pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) -> Option<(glfw::PWindow, glfw::GlfwReceiver<(f64, glfw::WindowEvent)>)> {
     let mut glfw = glfw::init(fail_on_errors).expect("Failed to initialize GLFW");
 
@@ -78,7 +80,7 @@ pub fn app_running(pwindow: PWindow) -> bool{ //TODO possiablely replaced by cor
     }
 }
 
-// for asx! macro
+// for asx! macro remove it is never used due to borrow checker issues
 pub fn input_handling(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, flow: Glfw) {
     let mut window = pwindow;
     let mut err_object = flow;

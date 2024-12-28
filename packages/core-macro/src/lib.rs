@@ -12,7 +12,7 @@ pub fn asx(input: TokenStream) -> TokenStream {
     let expanded = quote! {
         fn _generated_block_wrapper() {
 
-            let (mut window, events) = defined_window(true, 500, 500, "test")
+            let (mut window, events) = defined_window(true, 500, 500, "test") // need to figure out how to pass it from outside MAIN TODO!!!
                 .expect("Failed to Define window!");
             
             let mut err_object = error_init(); 
