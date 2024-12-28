@@ -31,7 +31,7 @@ pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) ->
     window.make_current();
     window.set_key_polling(true);
 
-    // inti settings TODO mayb inti after window creation
+    // inti settings for window
     glfw.window_hint(glfw::WindowHint::ContextVersion(3, 3));
     glfw.window_hint(glfw::WindowHint::OpenGlProfile(glfw::OpenGlProfileHint::Core));
     glfw.window_hint(glfw::WindowHint::OpenGlForwardCompat(true));
@@ -40,7 +40,7 @@ pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) ->
     }
 
     // return
-    Some((window, events)) 
+    Some((window, events)) // TODO use put in () for asx marco
 }
 
 pub fn error_init() -> Glfw {
@@ -50,8 +50,8 @@ pub fn error_init() -> Glfw {
 
 pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) { // TODO replaced with core macro, does whole thing, for testing, will halt asx! macro
     let mut window = pwindow;
-    let mut flow = aflow;
-    while !window.should_close() {
+    let mut flow = aflow; // flow for making defined run something else in asx! macro
+    while !window.should_close() { // move inside core macro some how
         // buffering frames
         window.swap_buffers();
 
@@ -59,8 +59,8 @@ pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, af
         flow.poll_events();
         for (_, event) in glfw::flush_messages(&events) {
             println!("{:?}", event);
-            match event {
-                glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => { // input esc
+            match event { // asx! macro will be used to replace this
+                glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => { // input esc // should be seperate function later
                     window.set_should_close(true)
                 },
                 _ => {},
@@ -69,7 +69,7 @@ pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, af
     }
 }
 
-pub fn app_running(pwindow: PWindow) -> bool{
+pub fn app_running(pwindow: PWindow) -> bool{ //TODO possiablely replaced by core macro
     if !pwindow.should_close() {
         true
     } else {
