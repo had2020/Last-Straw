@@ -9,6 +9,7 @@ path = "src/lib.rs"
 proc-macro = true
 
 [dependencies]
+glfw = "0.59.0"
 laststraw-core= { path = "../core" }
 quote = "1.0.38"
 #syn = "2.0.92"

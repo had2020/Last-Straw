@@ -68,6 +68,7 @@ dependencies = [
 name = "laststraw-core-macro"
 version = "0.1.0"
 dependencies = [
+ "glfw",
  "laststraw-core",
  "quote",
  "syn",

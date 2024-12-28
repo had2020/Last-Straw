@@ -51,6 +51,7 @@ pub fn error_init() -> Glfw {
 pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) { // TODO replaced with core macro, does whole thing, for testing, will halt asx! macro
     let mut window = pwindow;
     let mut flow = aflow; // flow for making defined run something else in asx! macro
+    // /\ redefinitions 
     while !window.should_close() { // move inside core macro some how
         // buffering frames
         window.swap_buffers();
@@ -74,6 +75,22 @@ pub fn app_running(pwindow: PWindow) -> bool{ //TODO possiablely replaced by cor
         true
     } else {
         false
+    }
+}
+
+// for asx! macro
+pub fn input_handling(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, flow: Glfw) {
+    let mut window = pwindow;
+    let mut err_object = flow;
+    err_object.poll_events();
+    for (_, event) in glfw::flush_messages(&events) {
+        println!("{:?}", event);
+        match event { // asx! macro will be used to replace this
+            glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => { // input esc // should be seperate function later
+                window.set_should_close(true)
+            },
+            _ => {},
+        }
     }
 }
 

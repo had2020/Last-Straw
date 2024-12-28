@@ -1,83 +1,9 @@
 extern crate proc_macro;
 use proc_macro::TokenStream;
-//use syn::{parse_macro_input, Block};
-//use syn::Expr::Block; // not used 
-//use quote::quote;
-
-use laststraw_core::testwindow;
-
-/* 
-#[proc_macro] 
-pub fn apploop(input: TokenStream) -> TokenStream {
-    let block: Block = parse_macro_input!(input as Block);
-    let expanded = quote! {
-        while true {
-            #block
-        }
-    };
-    TokenStream::from(expanded)
-} 
-*/
-
-/* 
-#[proc_macro_attribute]
-pub fn asx(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    // Parse the input token stream as a Rust block
-    let block: Block = parse_macro_input!(item as Block);
-
-    // Generate the transformed token stream
-    let expanded = quote! {
-        while true {
-            #block
-        }
-    };
-
-    // Return the expanded token stream
-    TokenStream::from(expanded)
-}
-*/
-
 use quote::quote;
 use syn::{parse_macro_input, Block};
 
-/* 
-#[proc_macro_attribute]
-pub fn asx(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    let block: Block = parse_macro_input!(item as Block);
-
-    let expanded = quote! {
-        fn _generated_block_wrapper() {
-            loop {
-                #block
-            }
-        }
-        _generated_block_wrapper();
-    };
-
-    TokenStream::from(expanded)
-}
-*/
-
-use syn::ItemFn;
-
-/* 
-#[proc_macro]
-pub fn asx(item: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(item as ItemFn);
-    let block = input.block;
-
-    let expanded = quote! {
-        fn _generated_block_wrapper() {
-            loop {
-                #block
-            }
-        }
-        _generated_block_wrapper();
-    };
-
-    TokenStream::from(expanded)
-}
-*/
+//use glfw::{fail_on_errors, Action, Context, Glfw, GlfwReceiver, MouseButton, PWindow, WindowEvent, Key}; // new argument for type of input maybe a way to have multiple inputs
 
 #[proc_macro]
 pub fn asx(input: TokenStream) -> TokenStream {
@@ -85,7 +11,29 @@ pub fn asx(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         fn _generated_block_wrapper() {
-            loop {
+
+            let (mut window, events) = defined_window(true, 500, 500, "test")
+                .expect("Failed to Define window!");
+            
+            let mut err_object = error_init(); 
+
+            while !window.should_close() { 
+                window.swap_buffers();
+                
+                //input_handling(window, events, err_object); // failing
+                // input handling
+                err_object.poll_events();
+
+                for (_, event) in glfw::flush_messages(&events) {
+                    //println!("{:?}", event); // debug
+                    match event { // asx! macro will be used to replace this
+                        glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => { 
+                            window.set_should_close(true)
+                        },
+                        _ => {},
+                    }
+                }
+                // end of input handling
                 #block
             }
         }
