@@ -46,7 +46,7 @@ pub fn asx(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         fn _generated_block_wrapper() {
-            while true {
+            loop {
                 #block
             }
         }
