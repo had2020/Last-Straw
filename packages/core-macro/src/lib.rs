@@ -40,9 +40,48 @@ pub fn asx(_attr: TokenStream, item: TokenStream) -> TokenStream {
 use quote::quote;
 use syn::{parse_macro_input, Block};
 
+/* 
 #[proc_macro_attribute]
 pub fn asx(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let block: Block = parse_macro_input!(item as Block);
+
+    let expanded = quote! {
+        fn _generated_block_wrapper() {
+            loop {
+                #block
+            }
+        }
+        _generated_block_wrapper();
+    };
+
+    TokenStream::from(expanded)
+}
+*/
+
+use syn::ItemFn;
+
+/* 
+#[proc_macro]
+pub fn asx(item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as ItemFn);
+    let block = input.block;
+
+    let expanded = quote! {
+        fn _generated_block_wrapper() {
+            loop {
+                #block
+            }
+        }
+        _generated_block_wrapper();
+    };
+
+    TokenStream::from(expanded)
+}
+*/
+
+#[proc_macro]
+pub fn asx(input: TokenStream) -> TokenStream {
+    let block = parse_macro_input!(input as Block);
 
     let expanded = quote! {
         fn _generated_block_wrapper() {

@@ -22,7 +22,7 @@ mod tests {
 
 use glfw::{fail_on_errors, Action, Context, Glfw, GlfwReceiver, MouseButton, PWindow, WindowEvent, Key};
 
-pub fn defined_window( width: u32, height: u32, name: &str) -> Option<(glfw::PWindow, glfw::GlfwReceiver<(f64, glfw::WindowEvent)>)> {
+pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) -> Option<(glfw::PWindow, glfw::GlfwReceiver<(f64, glfw::WindowEvent)>)> {
     let mut glfw = glfw::init(fail_on_errors).expect("Failed to initialize GLFW");
 
     let (mut window, events) = glfw.create_window(width, height, name, glfw::WindowMode::Windowed)
@@ -31,6 +31,15 @@ pub fn defined_window( width: u32, height: u32, name: &str) -> Option<(glfw::PWi
     window.make_current();
     window.set_key_polling(true);
 
+    // inti settings TODO mayb inti after window creation
+    glfw.window_hint(glfw::WindowHint::ContextVersion(3, 3));
+    glfw.window_hint(glfw::WindowHint::OpenGlProfile(glfw::OpenGlProfileHint::Core));
+    glfw.window_hint(glfw::WindowHint::OpenGlForwardCompat(true));
+    if resizeable {
+        glfw.window_hint(glfw::WindowHint::Resizable(true));
+    }
+
+    // return
     Some((window, events)) 
 }
 
@@ -39,7 +48,7 @@ pub fn error_init() -> Glfw {
     glfw::init(fail_on_errors!()).unwrap()
 }
 
-pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) { // TODO replace with block in core-macro
+pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) { // TODO replaced with core macro, does whole thing, for testing, will halt asx! macro
     let mut window = pwindow;
     let mut flow = aflow;
     while !window.should_close() {
