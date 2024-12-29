@@ -27,8 +27,8 @@ use glfw::{fail_on_errors, Action, Context, Glfw, GlfwReceiver, MouseButton, PWi
 pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) -> Option<(glfw::PWindow, glfw::GlfwReceiver<(f64, glfw::WindowEvent)>)> {
     let mut glfw = glfw::init(fail_on_errors).expect("Failed to initialize GLFW");
 
-    let (mut window, events) = glfw.create_window(width, height, name, glfw::WindowMode::Windowed)
-        .expect("Failed to create GLFW window, with defined_window method.");
+    let (mut window, events) = glfw.create_window(width, height, name, glfw::WindowMode::Windowed).unwrap();
+        //.expect("Failed to create GLFW window, with defined_window method.");
 
     window.make_current();
     window.set_key_polling(true);
