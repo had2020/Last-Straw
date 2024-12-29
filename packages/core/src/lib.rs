@@ -114,3 +114,22 @@ pub fn apploop(input: TokenStream) -> TokenStream {
     TokenStream::from(expanded)
 }
 */
+
+// post marco working TODO clear out old code
+
+/* 
+pub fn input_key(key_type: Key, action_type: Action, window: PWindow, events: GlfwReceiver<(f64, WindowEvent)>) {
+    for (_, event) in glfw::flush_messages(&events) { // This works TODO put in function for easy use with a match for input sting to input type
+        match event {
+            glfw::WindowEvent::Key(Key::Up, _, action_type, _) => { 
+                window.set_should_close(true);
+                println!("Up key pressed!");
+                
+            },
+            _ => {},
+        }
+    }
+}
+*/
+
+// TODO first ginal implementation
