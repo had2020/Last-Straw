@@ -96,6 +96,16 @@ pub fn input_handling(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>
     }
 }
 
+use syn::{Item, Macro};
+
+pub fn check_macros_in_block(block: &syn::Block) {
+    for stmt in &block.stmts {
+        if let syn::Stmt::Item(Item::Macro(Macro { mac, .. })) = stmt {
+            println!("Found macro: {}", mac.path.to_token_stream());
+        }
+    }
+}
+
 //extern crate proc_macro;
 //use proc_macro::TokenStream;
 

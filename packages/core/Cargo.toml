@@ -10,6 +10,7 @@ path = "src/lib.rs"
 
 [dependencies]
 glfw = "0.59.0"
+syn = "2.0.93"
 #laststraw-core-macro= { path = "../core-macro" } no longer needed
 
 
