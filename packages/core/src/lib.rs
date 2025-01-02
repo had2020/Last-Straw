@@ -96,6 +96,12 @@ pub fn input_handling(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>
     }
 }
 
+/* not needed
+pub fn setvalue(value: &mut bool) {
+    *value = true;
+}
+*/
+
 //extern crate proc_macro;
 //use proc_macro::TokenStream;
 
@@ -133,3 +139,47 @@ pub fn input_key(key_type: Key, action_type: Action, window: PWindow, events: Gl
 */
 
 // TODO first ginal implementation
+
+pub fn input_key<F>(key_type: Key, action_type: Action, window: &PWindow, events: &GlfwReceiver<(f64, WindowEvent)>, callback: F)
+where
+    F: Fn(),
+{
+    for (_, event) in glfw::flush_messages(&events) { // This works TODO put in function for easy use with a match for input sting to input type
+        match event {
+            glfw::WindowEvent::Key(key_type, _, action_type, _) => { 
+                
+            },
+            _ => {},
+        }
+    }
+    // call the closure
+    callback();
+    
+}
+
+
+
+pub fn inputmatch<F>(events: GlfwReceiver<(f64, WindowEvent)>, pattern: F)
+where
+    F: Fn(glfw::WindowEvent),
+{
+    for (_, event) in glfw::flush_messages(&events) {
+        pattern(event);
+    }
+}
+
+
+pub fn onupinputevent<F>(callback: F) -> impl Fn(glfw::WindowEvent)
+where
+    F: Fn(),
+{
+    let pattern = move |event: glfw::WindowEvent| {
+        match event {
+            glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => {
+                callback(); // run the passed function
+            },
+            _ => {},
+        }
+    };
+    pattern
+}
