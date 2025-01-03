@@ -2,8 +2,6 @@ extern crate proc_macro;
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, Block};
-use std::fs::File;
-use shmem::SharedMem;
 
 #[proc_macro]
 pub fn asx(input: TokenStream) -> TokenStream {
@@ -27,7 +25,7 @@ pub fn asx(input: TokenStream) -> TokenStream {
                             glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => { 
                                 
                                 if let Err(e) = std::fs::write("foo.txt", b"Hello, world!") {
-                                    eprintln!("Failed to write to file: {}", e); // replace with Shared Memory Using shmem crate
+                                    eprintln!("Failed to write to file: {}", e); // possible replace with shmem
                                     break;
                                 }
 
