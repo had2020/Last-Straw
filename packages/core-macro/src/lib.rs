@@ -21,14 +21,23 @@ pub fn asx(input: TokenStream) -> TokenStream {
 
                     // input key
                     for (_, event) in glfw::flush_messages(&events) {
+
+                        if let Err(e) = std::fs::write("inputs.txt", format!("{:?}\n", event)) {
+                            eprintln!("Failed to write to file: {}", e); // possible replace with shmem
+                            break;
+                        }
+
                         match event {
                             glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => { 
                                 
-                                if let Err(e) = std::fs::write("foo.txt", b"Hello, world!") {
-                                    eprintln!("Failed to write to file: {}", e); // possible replace with shmem
+                                /* //example process to write to file
+                                if let Err(e) = std::fs::write("foo.txt", b"bar!") {
+                                    eprintln!("Failed to write to file: {}", e); 
                                     break;
                                 }
+                                */
 
+                                std::fs::remove_file("inputs.txt").unwrap(); // clear input cache file
                                 window.set_should_close(true)
                                 
                             },
