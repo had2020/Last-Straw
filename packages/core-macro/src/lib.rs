@@ -19,27 +19,14 @@ pub fn asx(input: TokenStream) -> TokenStream {
                     // input handling
                     err_object.poll_events();
 
+                    //std::fs::remove_file("temp.tmp").unwrap(); // remove temp file
+
                     // input key
                     for (_, event) in glfw::flush_messages(&events) {
 
-                        if let Err(e) = std::fs::write("inputs.txt", format!("{:?}\n", event)) {
-                            eprintln!("Failed to write to file: {}", e); // possible replace with shmem
-                            break;
-                        }
-
                         match event {
-                            glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => { 
-                                
-                                /* //example process to write to file
-                                if let Err(e) = std::fs::write("foo.txt", b"bar!") {
-                                    eprintln!("Failed to write to file: {}", e); 
-                                    break;
-                                }
-                                */
-
-                                std::fs::remove_file("inputs.txt").unwrap(); // clear input cache file
-                                window.set_should_close(true)
-                                
+                            glfw::WindowEvent::Key(key, _, Action::Press, _) => {
+                                laststraw::handle_key_event_asx(key);
                             },
                             _ => {},
                         }
@@ -47,6 +34,9 @@ pub fn asx(input: TokenStream) -> TokenStream {
                     /* _ */
 
                     #block
+                }
+                if window.should_close() {
+                    std::fs::remove_file("temp.tmp").unwrap();
                 }
             };
             _generated_block_wrapper();

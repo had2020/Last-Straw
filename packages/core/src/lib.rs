@@ -140,6 +140,7 @@ pub fn input_key(key_type: Key, action_type: Action, window: PWindow, events: Gl
 
 // TODO first ginal implementation
 
+/* 
 pub fn input_key<F>(key_type: Key, action_type: Action, window: &PWindow, events: &GlfwReceiver<(f64, WindowEvent)>, callback: F)
 where
     F: Fn(),
@@ -182,4 +183,103 @@ where
         }
     };
     pattern
+}
+*/
+
+pub fn input_pressed(key: &str) -> bool {
+    let input = std::fs::read("temp.tmp").unwrap_or_else(|_| {
+        std::fs::File::create("temp.tmp").unwrap();
+        Vec::new()
+    });
+    let input_str = String::from_utf8(input).unwrap_or_default();
+
+    if let Err(e) = std::fs::write("temp.tmp", "") { // clear file to prevent too many loops of the same key
+        eprintln!("Failed to write to file: {}", e);
+    }
+
+    input_str == key
+}
+
+// all allowed keys in asx are listed here for reabability
+pub fn handle_key_event_asx(key: glfw::Key) {
+    let key_str = match key {
+        glfw::Key::Escape => "esc",
+        glfw::Key::Q => "Q",
+        glfw::Key::W => "W",
+        glfw::Key::E => "E",
+        glfw::Key::R => "R",
+        glfw::Key::T => "T",
+        glfw::Key::Y => "Y",
+        glfw::Key::U => "U",
+        glfw::Key::I => "I",
+        glfw::Key::O => "O",
+        glfw::Key::P => "P",
+        glfw::Key::A => "A",
+        glfw::Key::S => "S",
+        glfw::Key::D => "D",
+        glfw::Key::F => "F",
+        glfw::Key::G => "G",
+        glfw::Key::H => "H",
+        glfw::Key::J => "J",
+        glfw::Key::K => "K",
+        glfw::Key::L => "L",
+        glfw::Key::Z => "Z",
+        glfw::Key::X => "X",
+        glfw::Key::C => "C",
+        glfw::Key::V => "V",
+        glfw::Key::B => "B",
+        glfw::Key::N => "N",
+        glfw::Key::M => "M",
+        glfw::Key::Space => "space",
+        glfw::Key::Enter => "enter",
+        glfw::Key::Tab => "tab",
+        glfw::Key::Backspace => "backspace",
+        glfw::Key::Left => "left_arrow",
+        glfw::Key::Right => "right_arrow",
+        glfw::Key::Up => "up_arrow",
+        glfw::Key::Down => "down_arrow",
+        glfw::Key::LeftShift => "left_shift",
+        glfw::Key::RightShift => "right_shift",
+        glfw::Key::LeftControl => "left_ctrl",
+        glfw::Key::RightControl => "right_ctrl",
+        glfw::Key::LeftAlt => "left_alt",
+        glfw::Key::RightAlt => "right_alt",
+        glfw::Key::F1 => "F1",
+        glfw::Key::F2 => "F2",
+        glfw::Key::F3 => "F3",
+        glfw::Key::F4 => "F4",
+        glfw::Key::F5 => "F5",
+        glfw::Key::F6 => "F6",
+        glfw::Key::F7 => "F7",
+        glfw::Key::F8 => "F8",
+        glfw::Key::F9 => "F9",
+        glfw::Key::F10 => "F10",
+        glfw::Key::F11 => "F11",
+        glfw::Key::F12 => "F12",
+        glfw::Key::Num0 => "0",
+        glfw::Key::Num1 => "1",
+        glfw::Key::Num2 => "2",
+        glfw::Key::Num3 => "3",
+        glfw::Key::Num4 => "4",
+        glfw::Key::Num5 => "5",
+        glfw::Key::Num6 => "6",
+        glfw::Key::Num7 => "7",
+        glfw::Key::Num8 => "8",
+        glfw::Key::Num9 => "9",
+        glfw::Key::Period => ".",
+        glfw::Key::Comma => ",",
+        glfw::Key::Semicolon => ";",
+        glfw::Key::Apostrophe => "'",
+        glfw::Key::Slash => "/",
+        glfw::Key::Backslash => "\\",
+        glfw::Key::LeftBracket => "[",
+        glfw::Key::RightBracket => "]",
+        glfw::Key::Minus => "-",
+        glfw::Key::Equal => "=",
+        _ => return,
+    };
+
+    if let Err(e) = std::fs::write("temp.tmp", key_str.as_bytes()) {
+        eprintln!("Failed to write to file: {}", e);
+    }
 }
