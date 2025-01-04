@@ -25,6 +25,8 @@ use glfw::{fail_on_errors, Action, Context, Glfw, GlfwReceiver, MouseButton, PWi
 // TODO at some point write some amazing documentation for everything
 
 pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) -> Option<(glfw::PWindow, glfw::GlfwReceiver<(f64, glfw::WindowEvent)>)> {
+
+    // init glfw
     let mut glfw = glfw::init(fail_on_errors).expect("Failed to initialize GLFW");
 
     let (mut window, events) = glfw.create_window(width, height, name, glfw::WindowMode::Windowed).unwrap();
@@ -32,6 +34,9 @@ pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) ->
 
     window.make_current();
     window.set_key_polling(true);
+
+    // init gl
+    gl::load_with(|s| window.get_proc_address(s) as *const _);
 
     // inti settings for window
     glfw.window_hint(glfw::WindowHint::ContextVersion(3, 3));
@@ -96,6 +101,48 @@ pub fn input_handling(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>
     }
 }
 
+pub fn set_background_color(color: &str) {
+    let (r, g, b, a) = match color {
+        "red" => (1.0, 0.0, 0.0, 1.0),
+        "green" => (0.0, 1.0, 0.0, 1.0),
+        "blue" => (0.0, 0.0, 1.0, 1.0),
+        "white" => (1.0, 1.0, 1.0, 1.0),
+        "black" => (0.0, 0.0, 0.0, 1.0),
+        "yellow" => (1.0, 1.0, 0.0, 1.0),
+        "cyan" => (0.0, 1.0, 1.0, 1.0),
+        "magenta" => (1.0, 0.0, 1.0, 1.0),
+        "orange" => (1.0, 0.5, 0.0, 1.0),
+        "purple" => (0.5, 0.0, 0.5, 1.0),
+        "pink" => (1.0, 0.75, 0.8, 1.0),
+        "brown" => (0.6, 0.3, 0.0, 1.0),
+        "gray" => (0.5, 0.5, 0.5, 1.0),
+        "light_gray" => (0.75, 0.75, 0.75, 1.0),
+        "dark_gray" => (0.25, 0.25, 0.25, 1.0),
+        "light_blue" => (0.68, 0.85, 0.9, 1.0),
+        "dark_blue" => (0.0, 0.0, 0.55, 1.0),
+        "light_green" => (0.56, 0.93, 0.56, 1.0),
+        "dark_green" => (0.0, 0.39, 0.0, 1.0),
+        _ => (0.0, 0.0, 0.0, 1.0), // default to black if color is not recognized
+    };
+
+    unsafe {
+        gl::ClearColor(r, g, b, a);
+    }
+    clear_color_buffer();
+}
+
+pub fn clear_color_buffer() {
+    unsafe {
+        gl::Clear(gl::COLOR_BUFFER_BIT);
+    }
+}
+
+pub fn set_custom_background_color(r: f32, g: f32, b: f32, a: f32) {
+    unsafe {
+        gl::ClearColor(r, g, b, a);
+    }
+    clear_color_buffer();
+}
 /* not needed
 pub fn setvalue(value: &mut bool) {
     *value = true;
