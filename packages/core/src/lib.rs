@@ -20,6 +20,8 @@ mod tests {
 }
  */
 
+// TODO consie tests maybe, or better documentation
+
 use glfw::{fail_on_errors, Action, Context, Glfw, GlfwReceiver, MouseButton, PWindow, WindowEvent, Key};
 
 // TODO at some point write some amazing documentation for everything
@@ -53,28 +55,6 @@ pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) ->
 pub fn error_init() -> Glfw {
     use glfw::fail_on_errors;
     glfw::init(fail_on_errors!()).unwrap()
-}
-
-pub fn testwindow(pwindow: PWindow, events: GlfwReceiver<(f64, WindowEvent)>, aflow: Glfw) { // TODO replaced with core macro, does whole thing, for testing, will halt asx! macro
-    let mut window = pwindow;
-    let mut flow = aflow; // flow for making defined run something else in asx! macro
-    // /\ redefinitions 
-    while !window.should_close() { // move inside core macro some how
-        // buffering frames
-        window.swap_buffers();
-
-        // event handling input 
-        flow.poll_events();
-        for (_, event) in glfw::flush_messages(&events) {
-            println!("{:?}", event);
-            match event { // asx! macro will be used to replace this
-                glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => { // input esc // should be seperate function later
-                    window.set_should_close(true)
-                },
-                _ => {},
-            }
-        }
-    }
 }
 
 pub fn app_running(pwindow: PWindow) -> bool{ //TODO possiablely replaced by core macro
@@ -143,95 +123,6 @@ pub fn set_custom_background_color(r: f32, g: f32, b: f32, a: f32) {
     }
     clear_color_buffer();
 }
-/* not needed
-pub fn setvalue(value: &mut bool) {
-    *value = true;
-}
-*/
-
-//extern crate proc_macro;
-//use proc_macro::TokenStream;
-
-/* 
-pub fn apploop(input: TokenStream) -> TokenStream {
-    //input as a block of code
-    let block: Block = parse_macro_input!(input as Block);
-
-    //while loop wrapping code
-    let expanded = quote! {
-        while true {
-            #block
-        }
-    };
-
-    TokenStream::from(expanded)
-}
-*/
-
-// post marco working TODO clear out old code
-
-/* 
-pub fn input_key(key_type: Key, action_type: Action, window: PWindow, events: GlfwReceiver<(f64, WindowEvent)>) {
-    for (_, event) in glfw::flush_messages(&events) { // This works TODO put in function for easy use with a match for input sting to input type
-        match event {
-            glfw::WindowEvent::Key(Key::Up, _, action_type, _) => { 
-                window.set_should_close(true);
-                println!("Up key pressed!");
-                
-            },
-            _ => {},
-        }
-    }
-}
-*/
-
-// TODO first ginal implementation
-
-/* 
-pub fn input_key<F>(key_type: Key, action_type: Action, window: &PWindow, events: &GlfwReceiver<(f64, WindowEvent)>, callback: F)
-where
-    F: Fn(),
-{
-    for (_, event) in glfw::flush_messages(&events) { // This works TODO put in function for easy use with a match for input sting to input type
-        match event {
-            glfw::WindowEvent::Key(key_type, _, action_type, _) => { 
-                
-            },
-            _ => {},
-        }
-    }
-    // call the closure
-    callback();
-    
-}
-
-
-
-pub fn inputmatch<F>(events: GlfwReceiver<(f64, WindowEvent)>, pattern: F)
-where
-    F: Fn(glfw::WindowEvent),
-{
-    for (_, event) in glfw::flush_messages(&events) {
-        pattern(event);
-    }
-}
-
-
-pub fn onupinputevent<F>(callback: F) -> impl Fn(glfw::WindowEvent)
-where
-    F: Fn(),
-{
-    let pattern = move |event: glfw::WindowEvent| {
-        match event {
-            glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => {
-                callback(); // run the passed function
-            },
-            _ => {},
-        }
-    };
-    pattern
-}
-*/
 
 pub fn input_pressed(key: &str) -> bool {
     let input = std::fs::read("temp.tmp").unwrap_or_else(|_| {
@@ -329,4 +220,36 @@ pub fn handle_key_event_asx(key: glfw::Key) {
     if let Err(e) = std::fs::write("temp.tmp", key_str.as_bytes()) {
         eprintln!("Failed to write to file: {}", e);
     }
+}
+
+//TODO
+pub fn handle_mouse_button_event_asx(button: glfw::MouseButton) {
+    let button_str = match button {
+        glfw::MouseButton::Button1 => "mouse_button1",
+        glfw::MouseButton::Button2 => "mouse_button2",
+        glfw::MouseButton::Button3 => "mouse_button3",
+        glfw::MouseButton::Button4 => "mouse_button4",
+        glfw::MouseButton::Button5 => "mouse_button5",
+        glfw::MouseButton::Button6 => "mouse_button6",
+        glfw::MouseButton::Button7 => "mouse_button7",
+        glfw::MouseButton::Button8 => "mouse_button8",
+        _ => return,
+    };
+
+    if let Err(e) = std::fs::write("temp.tmp2", button_str.as_bytes()) {
+        eprintln!("Failed to write to file: {}", e);
+    }
+}
+
+//TODO
+pub fn handle_mouse_scroll_event_asx(scroll: f64) {
+    let scroll_str = scroll.to_string();
+
+    if let Err(e) = std::fs::write("temp.tmp3", scroll_str.as_bytes()) {
+        eprintln!("Failed to write to file: {}", e);
+    }
+}
+
+pub fn text() {
+;
 }
