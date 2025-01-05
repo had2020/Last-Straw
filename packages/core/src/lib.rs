@@ -251,6 +251,7 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
 }
 
 // letter drawing
+const FONT_BYTES: &[u8] = include_bytes!("../assets/fonts/FiraSans-Regular.ttf"); // always having font loaded in package
 
 extern crate freetype as ft;
 use std::collections::VecDeque;
@@ -346,31 +347,20 @@ pub fn draw_curve(curve: ft::outline::Curve, vertices: &mut Vec<CurvePoint>) {
     }
 }
 
-pub fn text() {
-    // example run cargo run '/Users/hadrian/Developer/Rust Projects/randomrusttestsdeleteafterlasstraw/combiney/src/FiraSans-Regular.ttf' A
-    let mut args = std::env::args();
+pub fn text(character: char) {
 
-    if args.len() != 3 {
-        let exe = args.next().unwrap();
-        println!("Usage: {} font character", exe);
-        return;
-    }
-
-    let font = args.nth(1).unwrap();
-    let character = args.next().and_then(|s| s.chars().next()).unwrap() as usize;
+    let font = "../assets/fonts/FiraSans-Regular.ttf";
     let library = ft::Library::init().unwrap();
-    let face = library.new_face(font, 0).unwrap();
+    //let face = library.new_face(font, 0).unwrap();
+    let face = library // should load path from emmbeded bytes
+        .new_memory_face(FONT_BYTES.to_vec(), 0)
+        .expect("Failed to load font");
 
     face.set_char_size(40 * 64, 0, 50, 0).unwrap();
-    face.load_char(character, ft::face::LoadFlag::NO_SCALE)
+    face.load_char(character as usize, ft::face::LoadFlag::NO_SCALE)
         .unwrap();
 
     let glyph = face.glyph();
-    //let metrics = glyph.metrics(); TODO
-    //let xmin = metrics.horiBearingX - 5;
-    //let width = metrics.width + 10;
-    //let ymin = -metrics.horiBearingY - 5;
-    //let height = metrics.height + 10;
     let outline = glyph.outline().unwrap();
 
     // store all collected vertices
