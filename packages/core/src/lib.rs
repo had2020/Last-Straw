@@ -251,5 +251,5 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
 }
 
 pub fn text() {
-;
+
 }
