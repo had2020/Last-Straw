@@ -559,11 +559,12 @@ pub fn text(character: char) {
         gl::UseProgram(shader_program);
     }
 
+    let vertex_count: usize = all_vertices.iter().map(|contour| contour.len()).sum();
     let all_vertices_vec: Vec<_> = all_vertices.into_iter().collect();
     let vao = create_vao(&all_vertices_vec);
         
     //render(vao, 2);   
-    let vertex_count: usize = all_vertices.iter().map(|contour| contour.len()).sum();
+    //let vertex_count: usize = all_vertices.iter().map(|contour| contour.len()).sum();
     render(vao, vertex_count as i32);
 
 }
