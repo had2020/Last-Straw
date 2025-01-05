@@ -48,6 +48,14 @@ pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) ->
         glfw.window_hint(glfw::WindowHint::Resizable(true));
     }
 
+    // just to debug the opengl verison
+    let version = unsafe { 
+        std::ffi::CStr::from_ptr(gl::GetString(gl::VERSION) as *const i8)
+            .to_str()
+            .unwrap() 
+    };
+    println!("OpenGL Version: {}", version);
+
     // return
     Some((window, events)) // TODO use put in () for asx marco
 }
@@ -250,7 +258,7 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
     }
 }
 
-// letter drawing
+// character rendering 
 const FONT_BYTES: &[u8] = include_bytes!("../assets/fonts/FiraSans-Regular.ttf"); // always having font loaded in package
 
 extern crate freetype as ft;
@@ -322,6 +330,11 @@ pub fn create_vao(all_vertices: &[Vec<CurvePoint>]) -> GLuint {
         //gl::BindVertexArray(0);
     }
 
+    println!("All vertices collected:");
+    for (i, contour) in all_vertices.iter().enumerate() {
+        println!("Contour {}: {:?}", i, contour);
+    }
+
     vao
 }
 
@@ -345,6 +358,86 @@ pub fn draw_curve(curve: ft::outline::Curve, vertices: &mut Vec<CurvePoint>) {
             ));
         }
     }
+}
+
+pub fn render(vao: GLuint, count: i32) {
+    unsafe {
+        gl::BindVertexArray(vao);
+        gl::DrawArrays(gl::LINE_STRIP, 0, count);
+        gl::BindVertexArray(0);
+    }
+}
+
+pub fn compile_shader(src: &str, ty: GLenum) -> GLuint {
+    let shader = unsafe { gl::CreateShader(ty) };
+    unsafe {
+        gl::ShaderSource(
+            shader,
+            1,
+            &(src.as_ptr() as *const i8),
+            &(src.len() as i32),
+        );
+        gl::CompileShader(shader);
+    }
+
+    // Check for compilation errors
+    let mut success = gl::FALSE as GLint;
+    unsafe { gl::GetShaderiv(shader, gl::COMPILE_STATUS, &mut success) };
+    if success != gl::TRUE as GLint {
+        let mut len = 0;
+        unsafe { gl::GetShaderiv(shader, gl::INFO_LOG_LENGTH, &mut len) };
+        let mut buffer = Vec::with_capacity(len as usize);
+        unsafe {
+        buffer.set_len((len as usize) - 1); // Skip null terminator
+        }
+        unsafe {
+            gl::GetShaderInfoLog(
+                shader,
+                len,
+                ptr::null_mut(),
+                buffer.as_mut_ptr() as *mut i8,
+            )
+        };
+        panic!(
+            "Shader compilation failed: {}",
+            std::str::from_utf8(&buffer).unwrap()
+        );
+    }
+    shader
+}
+
+pub fn link_program(vertex_shader: GLuint, fragment_shader: GLuint) -> GLuint {
+    let program = unsafe { gl::CreateProgram() };
+    unsafe {
+        gl::AttachShader(program, vertex_shader);
+        gl::AttachShader(program, fragment_shader);
+        gl::LinkProgram(program);
+    }
+
+    // Check for linking errors
+    let mut success = gl::FALSE as GLint;
+    unsafe { gl::GetProgramiv(program, gl::LINK_STATUS, &mut success) };
+    if success != gl::TRUE as GLint {
+        let mut len = 0;
+        unsafe { gl::GetProgramiv(program, gl::INFO_LOG_LENGTH, &mut len) };
+        let mut buffer = Vec::with_capacity(len as usize);
+        unsafe {
+        buffer.set_len((len as usize) - 1); // Skip null terminator
+        }
+        unsafe {
+            gl::GetProgramInfoLog(
+                program,
+                len,
+                ptr::null_mut(),
+                buffer.as_mut_ptr() as *mut i8,
+            )
+        };
+        panic!(
+            "Program linking failed: {}",
+            std::str::from_utf8(&buffer).unwrap()
+        );
+    }
+    program
 }
 
 pub fn text(character: char) {
@@ -376,7 +469,7 @@ pub fn text(character: char) {
         all_vertices.push_back(contour_vertices);
     }
 
-    // process collected vertices
+    // debug collected vertices
     /* 
     for (i, contour) in all_vertices.iter().enumerate() {
         println!("Contour {}:", i);
@@ -396,7 +489,81 @@ pub fn text(character: char) {
     }
     */
 
+    let version = unsafe {
+        std::ffi::CStr::from_ptr(gl::GetString(gl::VERSION) as *const i8)
+            .to_str()
+            .unwrap()
+    };
+    
+    // Extract the major and minor version numbers
+    let mut major_version = 0;
+    let mut minor_version = 0;
+    
+    if let Some(version_match) = version.split('.').collect::<Vec<&str>>().get(0..2) {
+        major_version = version_match[0].parse().unwrap_or(0);
+        minor_version = version_match[1].parse().unwrap_or(0);
+    }
+    
+    // Declare shader sources
+    let (vertex_shader_src, fragment_shader_src);
+    
+    if major_version > 3 || (major_version == 3 && minor_version >= 3) {
+        // GLSL 330 core shaders
+        vertex_shader_src = r#"
+        #version 330 core
+        layout(location = 0) in vec2 aPos;
+        void main() {
+            gl_Position = vec4(aPos, 0.0, 1.0);
+        }
+        "#;
+    
+        fragment_shader_src = r#"
+        #version 330 core
+        out vec4 FragColor;
+        void main() {
+            FragColor = vec4(1.0, 1.0, 1.0, 1.0); // White
+        }
+        "#;
+    } else if major_version == 2 || (major_version == 1 && minor_version >= 2) {
+        // GLSL 120 shaders
+        vertex_shader_src = r#"
+        #version 120
+        attribute vec2 aPos;
+        void main() {
+            gl_Position = vec4(aPos, 0.0, 1.0);
+        }
+        "#;
+    
+        fragment_shader_src = r#"
+        #version 120
+        void main() {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+        "#;
+    } else {
+        panic!("Unsupported OpenGL version: {}.{}", major_version, minor_version);
+    }
+    
+
+    let vertex_shader = compile_shader(vertex_shader_src, gl::VERTEX_SHADER);
+    let fragment_shader = compile_shader(fragment_shader_src, gl::FRAGMENT_SHADER);
+    let shader_program = link_program(vertex_shader, fragment_shader);
+
+    let error_code = unsafe { gl::GetError() };
+    if error_code != gl::NO_ERROR {
+        eprintln!("OpenGL Error: {}", error_code);
+    }
+
+    // Use the shader program
+    unsafe {
+        gl::UseProgram(shader_program);
+    }
+
     let all_vertices_vec: Vec<_> = all_vertices.into_iter().collect();
     let vao = create_vao(&all_vertices_vec);
+        
+    //render(vao, 2);   
+    let vertex_count: usize = all_vertices.iter().map(|contour| contour.len()).sum();
+    render(vao, vertex_count as i32);
 
 }
