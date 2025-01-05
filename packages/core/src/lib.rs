@@ -22,42 +22,30 @@ mod tests {
 
 // TODO consie tests maybe, or better documentation
 
-use glfw::{fail_on_errors, Action, Context, Glfw, GlfwReceiver, MouseButton, PWindow, WindowEvent, Key};
-
 // TODO at some point write some amazing documentation for everything
 
-pub fn defined_window( resizeable: bool, width: u32, height: u32, name: &str) -> Option<(glfw::PWindow, glfw::GlfwReceiver<(f64, glfw::WindowEvent)>)> {
+use minifb::{Key, Window, WindowOptions};
 
-    // init glfw
-    let mut glfw = glfw::init(fail_on_errors).expect("Failed to initialize GLFW");
+pub fn defined_window( resizeable: bool, width: usize, height: usize, name: &str) -> (Window, Vec<u32>) {
+    // Initialize the pixel buffer
+    let mut buffer: Vec<u32> = vec![0; width * height];
 
-    let (mut window, events) = glfw.create_window(width, height, name, glfw::WindowMode::Windowed).unwrap();
-        //.expect("Failed to create GLFW window, with defined_window method.");
+    // Create a window
+    let mut window = Window::new(
+        name,
+        width,
+        height,
+        //WindowOptions::default(),
+        WindowOptions {
+            resize: resizeable,
+            ..WindowOptions::default()
+        },
+    )
+    .unwrap_or_else(|e| {
+        panic!("Unable to open window: {}", e);
+    });
 
-    window.make_current();
-    window.set_key_polling(true);
-
-    // init gl
-    gl::load_with(|s| window.get_proc_address(s) as *const _);
-
-    // inti settings for window
-    glfw.window_hint(glfw::WindowHint::ContextVersion(3, 3));
-    glfw.window_hint(glfw::WindowHint::OpenGlProfile(glfw::OpenGlProfileHint::Core));
-    glfw.window_hint(glfw::WindowHint::OpenGlForwardCompat(true));
-    if resizeable {
-        glfw.window_hint(glfw::WindowHint::Resizable(true));
-    }
-
-    // just to debug the opengl verison
-    let version = unsafe { 
-        std::ffi::CStr::from_ptr(gl::GetString(gl::VERSION) as *const i8)
-            .to_str()
-            .unwrap() 
-    };
-    println!("OpenGL Version: {}", version);
-
-    // return
-    Some((window, events)) // TODO use put in () for asx marco
+    (window, buffer)
 }
 
 pub fn error_init() -> Glfw {
@@ -258,6 +246,7 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
     }
 }
 
+/* 
 // character rendering 
 const FONT_BYTES: &[u8] = include_bytes!("../assets/fonts/FiraSans-Regular.ttf"); // always having font loaded in package
 
@@ -568,3 +557,5 @@ pub fn text(character: char) {
     render(vao, vertex_count as i32);
 
 }
+
+*/
