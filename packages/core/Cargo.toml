@@ -9,6 +9,7 @@ path = "src/lib.rs"
 #proc-macro = true
 
 [dependencies]
+freetype-rs = "0.37.0"
 gl = "0.14.0"
 glfw = "0.59.0"
 #laststraw-core-macro= { path = "../core-macro" } no longer needed

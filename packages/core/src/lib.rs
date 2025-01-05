@@ -250,6 +250,163 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
     }
 }
 
+// letter drawing
+
+extern crate freetype as ft;
+use std::collections::VecDeque;
+
+use gl::types::*;
+use std::ptr;
+use std::mem;
+use std::os::raw::c_void;
+
+#[derive(Debug)]
+enum CurvePoint {
+    Line(f64, f64),
+    Bezier2((f64, f64), (f64, f64)),
+    Bezier3((f64, f64), (f64, f64), (f64, f64)),
+}
+
+pub fn create_vao(all_vertices: &[Vec<CurvePoint>]) -> GLuint {
+    // Flatten the vertex data
+    let mut flat_vertices = Vec::new();
+    for contour in all_vertices {
+        for vertex in contour {
+            match vertex {
+                CurvePoint::Line(x, y) => flat_vertices.extend_from_slice(&[*x, *y]),
+                CurvePoint::Bezier2(p1, p2) => {
+                    flat_vertices.extend_from_slice(&[p1.0, p1.1, p2.0, p2.1])
+                }
+                CurvePoint::Bezier3(p1, p2, p3) => {
+                    flat_vertices.extend_from_slice(&[p1.0, p1.1, p2.0, p2.1, p3.0, p3.1])
+                }
+            }
+        }
+    }
+
+    let mut vao: GLuint = 0;
+    let mut vbo: GLuint = 0;
+
+    unsafe {
+        // Generate and bind the VAO
+        gl::GenVertexArrays(1, &mut vao);
+        gl::BindVertexArray(vao);
+
+        // Generate and bind the VBO
+        gl::GenBuffers(1, &mut vbo);
+        gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+
+        // Upload the vertex data to the GPU
+        gl::BufferData(
+            gl::ARRAY_BUFFER,
+            (flat_vertices.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
+            flat_vertices.as_ptr() as *const c_void,
+            gl::STATIC_DRAW,
+        );
+
+        // Define the vertex attributes (e.g., 2D positions)
+        let stride = 2 * mem::size_of::<GLfloat>() as GLsizei;
+        gl::VertexAttribPointer(
+            0,                  // Attribute index
+            2,                  // Number of components per vertex
+            gl::FLOAT,          // Data type
+            gl::FALSE,          // Normalized?
+            stride,             // Stride
+            ptr::null(),        // Offset
+        );
+        gl::EnableVertexAttribArray(0);
+
+        // Unbind the VAO and VBO for safety
+        //gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+        //gl::BindVertexArray(0);
+    }
+
+    vao
+}
+
+
+pub fn draw_curve(curve: ft::outline::Curve, vertices: &mut Vec<CurvePoint>) {
+    match curve {
+        ft::outline::Curve::Line(pt) => {
+            vertices.push(CurvePoint::Line(pt.x as f64, -pt.y as f64));
+        }
+        ft::outline::Curve::Bezier2(pt1, pt2) => {
+            vertices.push(CurvePoint::Bezier2(
+                (pt1.x as f64, -pt1.y as f64),
+                (pt2.x as f64, -pt2.y as f64),
+            ));
+        }
+        ft::outline::Curve::Bezier3(pt1, pt2, pt3) => {
+            vertices.push(CurvePoint::Bezier3(
+                (pt1.x as f64, -pt1.y as f64),
+                (pt2.x as f64, -pt2.y as f64),
+                (pt3.x as f64, -pt3.y as f64),
+            ));
+        }
+    }
+}
+
 pub fn text() {
+    // example run cargo run '/Users/hadrian/Developer/Rust Projects/randomrusttestsdeleteafterlasstraw/combiney/src/FiraSans-Regular.ttf' A
+    let mut args = std::env::args();
+
+    if args.len() != 3 {
+        let exe = args.next().unwrap();
+        println!("Usage: {} font character", exe);
+        return;
+    }
+
+    let font = args.nth(1).unwrap();
+    let character = args.next().and_then(|s| s.chars().next()).unwrap() as usize;
+    let library = ft::Library::init().unwrap();
+    let face = library.new_face(font, 0).unwrap();
+
+    face.set_char_size(40 * 64, 0, 50, 0).unwrap();
+    face.load_char(character, ft::face::LoadFlag::NO_SCALE)
+        .unwrap();
+
+    let glyph = face.glyph();
+    //let metrics = glyph.metrics(); TODO
+    //let xmin = metrics.horiBearingX - 5;
+    //let width = metrics.width + 10;
+    //let ymin = -metrics.horiBearingY - 5;
+    //let height = metrics.height + 10;
+    let outline = glyph.outline().unwrap();
+
+    // store all collected vertices
+    let mut all_vertices: VecDeque<Vec<CurvePoint>> = VecDeque::new();
+
+    for contour in outline.contours_iter() {
+        let mut contour_vertices: Vec<CurvePoint> = Vec::new();
+        let start = contour.start();
+        contour_vertices.push(CurvePoint::Line(start.x as f64, -start.y as f64));
+        for curve in contour {
+            draw_curve(curve, &mut contour_vertices);
+        }
+        all_vertices.push_back(contour_vertices);
+    }
+
+    // process collected vertices
+    /* 
+    for (i, contour) in all_vertices.iter().enumerate() {
+        println!("Contour {}:", i);
+        for vertex in contour {
+            match vertex {
+                CurvePoint::Line(x, y) => println!("Line to: ({}, {})", x, y),
+                CurvePoint::Bezier2(p1, p2) => println!(
+                    "Quadratic Bezier to: Control ({}, {}), End ({}, {})",
+                    p1.0, p1.1, p2.0, p2.1
+                ),
+                CurvePoint::Bezier3(p1, p2, p3) => println!(
+                    "Cubic Bezier to: Control1 ({}, {}), Control2 ({}, {}), End ({}, {})",
+                    p1.0, p1.1, p2.0, p2.1, p3.0, p3.1
+                ),
+            }
+        }
+    }
+    */
+
+    let all_vertices_vec: Vec<_> = all_vertices.into_iter().collect();
+    let vao = create_vao(&all_vertices_vec);
 
 }

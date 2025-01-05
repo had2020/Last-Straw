@@ -4,7 +4,7 @@ use quote::quote;
 use syn::{parse_macro_input, Block};
 
 #[proc_macro]
-pub fn asx(input: TokenStream) -> TokenStream {
+pub fn asx(input: TokenStream) -> TokenStream { // todo wait until user input change to keep running
     let block = parse_macro_input!(input as Block);
 
     let expanded = quote! {
