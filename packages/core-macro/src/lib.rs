@@ -10,33 +10,23 @@ pub fn asx(input: TokenStream) -> TokenStream { // todo wait until user input ch
     let expanded = quote! {
         {
             let mut _generated_block_wrapper = || {
-                
-                let mut err_object = error_init(); 
 
-                while !window.should_close() { 
-                    window.swap_buffers();
-                    
-                    // input handling
-                    err_object.poll_events();
+                let mut should_close:bool = false;
+                let mut input_change:bool = false;
 
-                    //std::fs::remove_file("temp.tmp").unwrap(); // remove temp file
+                while window.is_open() && !should_close {
 
-                    // input key
-                    for (_, event) in glfw::flush_messages(&events) {
+                    window.get_keys().iter().for_each(|key| {
+                        input_change = true;
+                    });
 
-                        match event {
-                            glfw::WindowEvent::Key(key, _, Action::Press, _) => {
-                                laststraw::handle_key_event_asx(key);
-                            },
-                            _ => {},
-                        }
+                    if input_change {
+                        input_change = false;
+                        // outisde vars also work
+                        #block
                     }
-                    /* _ */
 
-                    #block
-                }
-                if window.should_close() {
-                    std::fs::remove_file("temp.tmp").unwrap();
+                    window.update_with_buffer(&buffer, WIDTH, HEIGHT).unwrap();
                 }
             };
             _generated_block_wrapper();
