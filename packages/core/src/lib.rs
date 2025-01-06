@@ -31,6 +31,8 @@ pub struct App {
     pub buffer: Vec<u32>,
     pub should_close: bool,
     pub input_change: bool,
+    pub height: usize,
+    pub width: usize,
 }
 
 impl App {
@@ -41,6 +43,8 @@ impl App {
             buffer,
             should_close: false,
             input_change: false,
+            height: height,
+            width: width,
         }
     }
 }
@@ -234,6 +238,8 @@ pub fn input_pressed(app: &App, key: &str) -> bool {
 
 /* 
 //TODO
+// https://docs.rs/minifb/latest/minifb/struct.Window.html#method.get_mouse_pos
+// https://docs.rs/minifb/latest/minifb/enum.Icon.html
 pub fn handle_mouse_button_event_asx(button: glfw::MouseButton) {
     let button_str = match button {
         glfw::MouseButton::Button1 => "mouse_button1",
@@ -263,3 +269,31 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
 */
 
 // window.set_background_color(255, 0, 0);
+
+use rusttype::{point, Font, Scale};
+const FONT_BYTES: &[u8] = include_bytes!("../assets/fonts/FiraSans-Regular.ttf"); // always having font loaded in package
+
+pub fn single_text_basic(app: &mut App, text: &str) {
+    let font_data = FONT_BYTES;
+    let font = Font::try_from_bytes(font_data).expect("Error loading font");
+
+    // settings
+    let scale = Scale::uniform(50.0); // font size
+    let start_point = point(50.0, 100.0); // starting position of the text
+
+    // rasterize the text
+    let glyphs: Vec<_> = font.layout(text, scale, start_point).collect();
+    for glyph in glyphs {
+        if let Some(bounding_box) = glyph.pixel_bounding_box() {
+            glyph.draw(|x, y, v| {
+                let px = (bounding_box.min.x + x as i32) as usize;
+                let py = (bounding_box.min.y + y as i32) as usize;
+
+                if px < app.width && py < app.height {
+                    let color = (v * 255.0) as u32; // grayscale value
+                    app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
+                }
+            });
+        }
+    }
+}

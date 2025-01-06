@@ -12,7 +12,7 @@ pub fn asx(input: TokenStream) -> TokenStream { // todo wait until user input ch
             let mut _generated_block_wrapper = || {
 
                 while app.window.is_open() && !app.should_close {
-                    /* 
+                    /* //TODO optimization 
                     app.window.get_keys().iter().for_each(|key| {
                         app.input_change = true;
                     });
@@ -26,7 +26,7 @@ pub fn asx(input: TokenStream) -> TokenStream { // todo wait until user input ch
                     */
                     #block
 
-                    app.window.update_with_buffer(&app.buffer, WIDTH, HEIGHT).unwrap();
+                    app.window.update_with_buffer(&app.buffer, app.width, app.height).unwrap();
                 }
             };
             _generated_block_wrapper();
