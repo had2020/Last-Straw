@@ -15,7 +15,7 @@ pub fn asx(input: TokenStream) -> TokenStream { // todo wait until user input ch
 
                 while app.window.is_open() && !app.should_close {
                     #block
-                    // TODO halt till next input 
+                    // TODO add optional pause if no input event
 
                     app.window.update_with_buffer(&app.buffer, app.width, app.height).unwrap();
                 }

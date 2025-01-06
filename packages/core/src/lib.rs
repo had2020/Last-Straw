@@ -304,16 +304,36 @@ pub fn single_line_text(app: &mut App, position: Position, text: &str) {
     }
 }
 
-pub fn multi_line_text(app: &mut App, position: Position, text: Vec<&str>) {
+pub fn rasterize_text(font:&Font<'_>, line:&str, scale:Scale, start_point:rusttype::Point<f32>, app: &mut App) {
+    let glyphs: Vec<_> = font.layout(line, scale, start_point).collect();
+    for glyph in glyphs {
+        if let Some(bounding_box) = glyph.pixel_bounding_box() {
+            glyph.draw(|x, y, v| {
+                let px = (bounding_box.min.x + x as i32) as usize;
+                let py = (bounding_box.min.y + y as i32) as usize;
+
+                if px < app.width && py < app.height {
+                    let color = (v * 255.0) as u32; // grayscale value
+                    app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
+                }
+            });
+        }
+    }
+}
+
+pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Vec<&str>) {
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
 
     // settings
-    let scale1 = Scale::uniform(position.scale); // font size
-    let start_point = point(position.x, position.y); // starting position of the text
+    let scale = Scale::uniform(position.scale); // font size
+    let mut iteration_position: rusttype::Point<f32>;
+
+    iteration_position = point(position.x, position.y);
 
     for line in text.iter() {
-        println!("{}", line);
+        iteration_position =  point(iteration_position.x, iteration_position.y + spacing);
+        rasterize_text(&font, line, scale, iteration_position, app);
     }
 
     /* 
