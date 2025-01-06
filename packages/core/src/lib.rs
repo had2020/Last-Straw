@@ -72,6 +72,70 @@ pub fn close(app: &mut App) {
     app.should_close = true;
 }
 
+/* TODO fps timing
+use std::time::{Duration, Instant};
+
+pub fn fps_limit(fps; u64) { //let frame_start = Instant::now();
+    const frame_duration: Duration = Duration::from_secs(1) / fps;
+    let frame_time = frame_start.elapsed();
+    if frame_time < frame_duration {
+        std::thread::sleep(frame_duration - frame_time);
+    }
+}
+    */
+
+pub fn set_window_color(app: &mut App, color: &str) {
+    let new_color = match color {
+        "Green" => 0xFF_00FF00, 
+        "Red" => 0xFF_FF0000,   
+        "Blue" => 0xFF_0000FF,  
+        "Yellow" => 0xFF_FFFF00, 
+        "Cyan" => 0xFF_00FFFF,  
+        "Magenta" => 0xFF_FF00FF, 
+        "White" => 0xFF_FFFFFF,  
+        "Black" => 0xFF_000000,  
+        "Gray" => 0xFF_808080,  
+        "Orange" => 0xFF_FFA500, 
+        "Purple" => 0xFF_800080,
+        "Pink" => 0xFF_FFC0CB,   
+        "Brown" => 0xFF_A52A2A,  
+        "Light Gray" => 0xFF_D3D3D3, 
+        "Light Blue" => 0xFF_ADD8E6, 
+        "Dark Blue" => 0xFF_00008B,   
+        "Beige" => 0xFF_F5F5DC,       
+        "Teal" => 0xFF_008080,       
+        "Lavender" => 0xFF_E6E6FA,   
+        "Ivory" => 0xFF_FFFFF0,       
+        "Mint" => 0xFF_98FF98,    
+        "Coral" => 0xFF_FF7F50,     
+        "Navy" => 0xFF_000080,  
+        "Sky Blue" => 0xFF_87CEEB, 
+        "Sea Green" => 0xFF_2E8B57,   
+        "Forest Green" => 0xFF_228B22,     
+        "Dark Gray" => 0xFF_A9A9A9,      
+        "Slate Gray" => 0xFF_708090,     
+        "Charcoal" => 0xFF_36454F,       
+        "Jet Black" => 0xFF_343434,      
+        "Gunmetal" => 0xFF_2A3439,       
+        "Dark Slate Blue" => 0xFF_483D8B, 
+        "Midnight Blue" => 0xFF_191970,  
+        "Deep Navy" => 0xFF_1B1F3B,      
+        "Dark Olive Green" => 0xFF_556B2F, 
+        "Deep Forest Green" => 0xFF_1A2E1A, 
+        "Maroon" => 0xFF_800000,         
+        "Deep Burgundy" => 0xFF_4A0000,  
+        "Dark Chocolate" => 0xFF_3E2723,
+        "Dark Copper" => 0xFF_4E3629,    
+        "Onyx" => 0xFF_353839,           
+        "Obsidian" => 0xFF_1C1C1C, // Great for dark mode   
+        _ => return,
+    };
+
+    for pixel in app.buffer.iter_mut() {
+        *pixel = new_color;
+    }
+}
+
 
 pub fn input_pressed(app: &App, key: &str) -> bool {
     let minifb_key = match key {
