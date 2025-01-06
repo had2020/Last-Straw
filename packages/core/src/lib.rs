@@ -33,6 +33,18 @@ pub struct App {
     pub input_change: bool,
 }
 
+impl App {
+    pub fn new(width: usize, height: usize, title: &str) -> Self {
+        let (window, buffer) = defined_window(width, height, title);
+        App {
+            window,
+            buffer,
+            should_close: false,
+            input_change: false,
+        }
+    }
+}
+
 pub fn defined_window( width: usize, height: usize, name: &str) -> (Window, Vec<u32>) {
     // Initialize the pixel buffer
     let mut buffer: Vec<u32> = vec![0; width * height];
@@ -56,32 +68,12 @@ pub fn defined_window( width: usize, height: usize, name: &str) -> (Window, Vec<
     (window, buffer)
 }
 
-pub fn set_background_color(color: &str) {
-    let (r, g, b, a) = match color {
-        "red" => (1.0, 0.0, 0.0, 1.0),
-        "green" => (0.0, 1.0, 0.0, 1.0),
-        "blue" => (0.0, 0.0, 1.0, 1.0),
-        "white" => (1.0, 1.0, 1.0, 1.0),
-        "black" => (0.0, 0.0, 0.0, 1.0),
-        "yellow" => (1.0, 1.0, 0.0, 1.0),
-        "cyan" => (0.0, 1.0, 1.0, 1.0),
-        "magenta" => (1.0, 0.0, 1.0, 1.0),
-        "orange" => (1.0, 0.5, 0.0, 1.0),
-        "purple" => (0.5, 0.0, 0.5, 1.0),
-        "pink" => (1.0, 0.75, 0.8, 1.0),
-        "brown" => (0.6, 0.3, 0.0, 1.0),
-        "gray" => (0.5, 0.5, 0.5, 1.0),
-        "light_gray" => (0.75, 0.75, 0.75, 1.0),
-        "dark_gray" => (0.25, 0.25, 0.25, 1.0),
-        "light_blue" => (0.68, 0.85, 0.9, 1.0),
-        "dark_blue" => (0.0, 0.0, 0.55, 1.0),
-        "light_green" => (0.56, 0.93, 0.56, 1.0),
-        "dark_green" => (0.0, 0.39, 0.0, 1.0),
-        _ => (0.0, 0.0, 0.0, 1.0), // default to black if color is not recognized
-    };
+pub fn close(app: &mut App) {
+    app.should_close = true;
 }
 
-pub fn input_pressed(window: &Window, key: &str) -> bool {
+
+pub fn input_pressed(app: &App, key: &str) -> bool {
     let minifb_key = match key {
         "esc" => Key::Escape,
         "1" => Key::Key1,
@@ -169,7 +161,7 @@ pub fn input_pressed(window: &Window, key: &str) -> bool {
         _ => return false,
     };
 
-    if window.is_key_down(minifb_key) {
+    if app.window.is_key_down(minifb_key) {
         true
     } else {
         false

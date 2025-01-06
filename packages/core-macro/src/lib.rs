@@ -11,22 +11,19 @@ pub fn asx(input: TokenStream) -> TokenStream { // todo wait until user input ch
         {
             let mut _generated_block_wrapper = || {
 
-                let mut should_close:bool = false;
-                let mut input_change:bool = false;
+                while app.window.is_open() && !app.should_close {
 
-                while window.is_open() && !should_close {
-
-                    window.get_keys().iter().for_each(|key| {
-                        input_change = true;
+                    app.window.get_keys().iter().for_each(|key| {
+                        app.input_change = true;
                     });
 
-                    if input_change {
-                        input_change = false;
+                    if app.input_change {
+                        app.input_change = false;
                         // outisde vars also work
                         #block
                     }
 
-                    window.update_with_buffer(&buffer, WIDTH, HEIGHT).unwrap();
+                    app.window.update_with_buffer(&app.buffer, WIDTH, HEIGHT).unwrap();
                 }
             };
             _generated_block_wrapper();
