@@ -273,16 +273,22 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
 use rusttype::{point, Font, Scale};
 const FONT_BYTES: &[u8] = include_bytes!("../assets/fonts/FiraSans-Regular.ttf"); // always having font loaded in package
 
-pub fn single_text_basic(app: &mut App, text: &str) {
+pub struct Position {
+    pub x: f32,
+    pub y: f32,
+    pub scale: f32,
+}
+
+pub fn single_line_text(app: &mut App, position: Position, text: &str) {
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
 
     // settings
-    let scale = Scale::uniform(50.0); // font size
-    let start_point = point(50.0, 100.0); // starting position of the text
+    let scale1 = Scale::uniform(position.scale); // font size
+    let start_point = point(position.x, position.y); // starting position of the text
 
     // rasterize the text
-    let glyphs: Vec<_> = font.layout(text, scale, start_point).collect();
+    let glyphs: Vec<_> = font.layout(text, scale1, start_point).collect();
     for glyph in glyphs {
         if let Some(bounding_box) = glyph.pixel_bounding_box() {
             glyph.draw(|x, y, v| {
@@ -296,4 +302,34 @@ pub fn single_text_basic(app: &mut App, text: &str) {
             });
         }
     }
+}
+
+pub fn multi_line_text(app: &mut App, position: Position, text: Vec<&str>) {
+    let font_data = FONT_BYTES;
+    let font = Font::try_from_bytes(font_data).expect("Error loading font");
+
+    // settings
+    let scale1 = Scale::uniform(position.scale); // font size
+    let start_point = point(position.x, position.y); // starting position of the text
+
+    for line in text.iter() {
+        println!("{}", line);
+    }
+
+    /* 
+    let glyphs: Vec<_> = font.layout(line, scale1, start_point).collect();
+    for glyph in glyphs {
+        if let Some(bounding_box) = glyph.pixel_bounding_box() {
+            glyph.draw(|x, y, v| {
+                let px = (bounding_box.min.x + x as i32) as usize;
+                let py = (bounding_box.min.y + y as i32) as usize;
+
+                if px < app.width && py < app.height {
+                    let color = (v * 255.0) as u32; // grayscale value
+                    app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
+                }
+            });
+        }
+    }
+    */
 }
