@@ -33,6 +33,7 @@ pub struct App {
     pub input_change: bool,
     pub height: usize,
     pub width: usize,
+    pub font_path: &'static [u8],
 }
 
 impl App {
@@ -45,6 +46,7 @@ impl App {
             input_change: false,
             height: height,
             width: width,
+            font_path: include_bytes!("../assets/fonts/FiraSans-Regular.ttf"), 
         }
     }
 }
@@ -90,8 +92,8 @@ pub fn fps_limit(fps; u64) { //let frame_start = Instant::now();
 
 //TODO put colors in function that takes &str for buffer color ie whats down here and or make rgb mode with transpareance
 
-pub fn set_window_color(app: &mut App, color: &str) {
-    let new_color = match color {
+pub fn hex_color(name: &str) -> u32 {
+    let new_color: u32 = match name {
         "Green" => 0xFF_00FF00, 
         "Red" => 0xFF_FF0000,   
         "Blue" => 0xFF_0000FF,  
@@ -134,8 +136,13 @@ pub fn set_window_color(app: &mut App, color: &str) {
         "Dark Copper" => 0xFF_4E3629,    
         "Onyx" => 0xFF_353839,           
         "Obsidian" => 0xFF_1C1C1C, // Great for dark mode   
-        _ => return,
+        _ => 0xFF_FFC0CB, // defaults to pink if broken
     };
+    new_color
+}
+
+pub fn set_window_color(app: &mut App, color: &str) {
+    let new_color = hex_color(color);
 
     for pixel in app.buffer.iter_mut() {
         *pixel = new_color;
@@ -371,8 +378,24 @@ for y in y_start..y_start + height {
     }
 }
 */
+/* 
+pub fn button<F>(app: &mut App, position: Position, text: &str, on_click: F)
+where
+    F: FnOnce(), 
+{
+    let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
 
-pub fn button(app: &mut App, position: Position, text: &str) {
+    let mouse_pos = app.window.get_mouse_pos(minifb::MouseMode::Clamp).unwrap_or((0.0, 0.0));
+    let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
+
+    let is_within_button = mouse_x >= position.x
+    && mouse_x <= position.x + (text.len() as f32 * position.scale as f32)
+    && mouse_y >= position.y
+    && mouse_y <= position.y + position.scale as f32;
+
+    if left_down == true && is_within_button{
+        on_click();
+    }
 
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
@@ -394,6 +417,78 @@ pub fn button(app: &mut App, position: Position, text: &str) {
                     app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
                 }
             });
+        }
+    }
+}
+*/
+
+/* 
+#[macro_export]
+macro_rules! button {
+    ($app:expr, $position:expr, $text:expr, $on_click:expr) => {{
+
+        app_copy: laststraw::App = $app;
+
+        use rusttype::{point, Font, Scale};
+
+        let left_down = $app.window.get_mouse_down(minifb::MouseButton::Left);
+
+        let mouse_pos = $app
+            .window
+            .get_mouse_pos(minifb::MouseMode::Clamp)
+            .unwrap_or((0.0, 0.0));
+        let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
+
+        let is_within_button = mouse_x >= $position.x
+            && mouse_x <= $position.x + ($text.len() as f32 * $position.scale as f32)
+            && mouse_y >= $position.y
+            && mouse_y <= $position.y + $position.scale as f32;
+
+        if left_down && is_within_button {
+            $on_click();
+        }
+
+        let font_data = $app.font_path;
+        let font = Font::try_from_bytes(font_data).expect("Error loading font");
+
+        // settings
+        let scale1 = Scale::uniform($position.scale); // font size
+        let start_point = point($position.x, $position.y); // starting position of the text
+
+        // rasterize the text
+        let glyphs: Vec<_> = font.layout($text, scale1, start_point).collect();
+        for glyph in glyphs {
+            if let Some(bounding_box) = glyph.pixel_bounding_box() {
+                glyph.draw(|x, y, v| {
+                    let px = (bounding_box.min.x + x as i32) as usize;
+                    let py = (bounding_box.min.y + y as i32) as usize;
+
+                    if px < $app.width && py < $app.height {
+                        let color = (v * 255.0) as u32;
+                        $app.buffer[py * $app.width + px] =
+                            (color << 16) | (color << 8) | color;
+                    }
+                });
+            }
+        }
+    }};
+}
+*/
+
+pub fn draw_rectangle(buffer: &mut Vec<u32>, width: usize, height: usize, x: f32, y: f32, rect_width: f32, rect_height: f32, color: u32) {
+    let x_start = x as usize;
+    let y_start = y as usize;
+    let x_end = (x + rect_width) as usize;
+    let y_end = (y + rect_height) as usize;
+
+    for py in y_start..y_end {
+        for px in x_start..x_end {
+            if px < width && py < height {
+                // draw outline
+                if py == y_start || py == y_end - 1 || px == x_start || px == x_end - 1 {
+                    buffer[py * width + px] = color;
+                }
+            }
         }
     }
 }
