@@ -88,6 +88,8 @@ pub fn fps_limit(fps; u64) { //let frame_start = Instant::now();
 }
     */
 
+//TODO put colors in function that takes &str for buffer color ie whats down here and or make rgb mode with transpareance
+
 pub fn set_window_color(app: &mut App, color: &str) {
     let new_color = match color {
         "Green" => 0xFF_00FF00, 
@@ -258,28 +260,7 @@ where
 }
 
 /* 
-//TODO
-// https://docs.rs/minifb/latest/minifb/struct.Window.html#method.get_mouse_pos
-// https://docs.rs/minifb/latest/minifb/enum.Icon.html
-pub fn handle_mouse_button_event_asx(button: glfw::MouseButton) {
-    let button_str = match button {
-        glfw::MouseButton::Button1 => "mouse_button1",
-        glfw::MouseButton::Button2 => "mouse_button2",
-        glfw::MouseButton::Button3 => "mouse_button3",
-        glfw::MouseButton::Button4 => "mouse_button4",
-        glfw::MouseButton::Button5 => "mouse_button5",
-        glfw::MouseButton::Button6 => "mouse_button6",
-        glfw::MouseButton::Button7 => "mouse_button7",
-        glfw::MouseButton::Button8 => "mouse_button8",
-        _ => return,
-    };
-
-    if let Err(e) = std::fs::write("temp2.tmp", button_str.as_bytes()) {
-        eprintln!("Failed to write to file: {}", e);
-    }
-}
-
-//TODO
+//TODO window Scrolling
 pub fn handle_mouse_scroll_event_asx(scroll: f64) {
     let scroll_str = scroll.to_string();
 
@@ -383,7 +364,16 @@ pub fn editable_single_line(app: &mut App, position: Position, text: &str) {
     }
 }
 
+/*
+for y in y_start..y_start + height {
+    for x in x_start..x_start + width {
+        buffer[y * WIDTH + x] = color;
+    }
+}
+*/
+
 pub fn button(app: &mut App, position: Position, text: &str) {
+
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
 
