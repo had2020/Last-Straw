@@ -140,7 +140,7 @@ pub fn set_window_color(app: &mut App, color: &str) {
     }
 }
 
-
+// https://docs.rs/minifb/latest/minifb/struct.Window.html#method.get_keys
 pub fn input_pressed(app: &App, key: &str) -> bool {
     let minifb_key = match key {
         "esc" => Key::Escape,
@@ -234,6 +234,27 @@ pub fn input_pressed(app: &App, key: &str) -> bool {
     } else {
         false
     }
+}
+
+/* How Use, TODO incapsulate
+    keys_down(&app, |key| {
+        match key {
+            minifb::Key::W => println!("W key pressed"),
+            minifb::Key::A => println!("A key pressed"),
+            minifb::Key::S => println!("S key pressed"),
+            minifb::Key::D => println!("D key pressed"),
+            _ => println!("{:?} key pressed", key),
+            }
+        });
+*/
+pub fn keys_down<F>(app: &App, handle_key: F)
+where
+    F: Fn(&minifb::Key),
+{
+    app.window
+        .get_keys_pressed(minifb::KeyRepeat::No)
+        .iter()
+        .for_each(|key| handle_key(key));
 }
 
 /* 
@@ -335,9 +356,18 @@ pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Ve
         iteration_position =  point(iteration_position.x, iteration_position.y + spacing);
         rasterize_text(&font, line, scale, iteration_position, app);
     }
+}
 
-    /* 
-    let glyphs: Vec<_> = font.layout(line, scale1, start_point).collect();
+pub fn editable_single_line(app: &mut App, position: Position, text: &str) {
+    let font_data = FONT_BYTES;
+    let font = Font::try_from_bytes(font_data).expect("Error loading font");
+
+    // settings
+    let scale1 = Scale::uniform(position.scale); // font size
+    let start_point = point(position.x, position.y); // starting position of the text
+
+    // rasterize the text
+    let glyphs: Vec<_> = font.layout(text, scale1, start_point).collect();
     for glyph in glyphs {
         if let Some(bounding_box) = glyph.pixel_bounding_box() {
             glyph.draw(|x, y, v| {
@@ -351,5 +381,29 @@ pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Ve
             });
         }
     }
-    */
+}
+
+pub fn button(app: &mut App, position: Position, text: &str) {
+    let font_data = FONT_BYTES;
+    let font = Font::try_from_bytes(font_data).expect("Error loading font");
+
+    // settings
+    let scale1 = Scale::uniform(position.scale); // font size
+    let start_point = point(position.x, position.y); // starting position of the text
+
+    // rasterize the text
+    let glyphs: Vec<_> = font.layout(text, scale1, start_point).collect();
+    for glyph in glyphs {
+        if let Some(bounding_box) = glyph.pixel_bounding_box() {
+            glyph.draw(|x, y, v| {
+                let px = (bounding_box.min.x + x as i32) as usize;
+                let py = (bounding_box.min.y + y as i32) as usize;
+
+                if px < app.width && py < app.height {
+                    let color = (v * 255.0) as u32;
+                    app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
+                }
+            });
+        }
+    }
 }
