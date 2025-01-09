@@ -6,7 +6,8 @@ use syn::{parse_macro_input, Block};
 // TODO update change on file save
 
 #[proc_macro]
-pub fn asx(input: TokenStream) -> TokenStream { // todo wait until user input change to keep running
+pub fn asx(input: TokenStream) -> TokenStream {
+    // todo wait until user input change to keep running
     let block = parse_macro_input!(input as Block);
 
     let expanded = quote! {
@@ -19,6 +20,22 @@ pub fn asx(input: TokenStream) -> TokenStream { // todo wait until user input ch
 
                     app.window.update_with_buffer(&app.buffer, app.width, app.height).unwrap();
                 }
+            };
+            _generated_block_wrapper();
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro]
+pub fn button(input: TokenStream) -> TokenStream {
+    let block = parse_macro_input!(input as Block);
+
+    let expanded = quote! {
+        {
+            let mut _generated_block_wrapper = || {
+                // any outside parameters can be used here
             };
             _generated_block_wrapper();
         }

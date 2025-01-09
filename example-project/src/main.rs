@@ -19,14 +19,31 @@ fn main() {
             app.should_close = true;
         }
 
-        if input_pressed(&app,"space") {
-            single_line_text(&mut app, Position { x: 80.0, y: 80.0, scale: 30.0 } , "hello world!");
+        if input_pressed(&app, "space") {
+            single_line_text(
+                &mut app,
+                Position {
+                    x: 80.0,
+                    y: 80.0,
+                    scale: 30.0,
+                },
+                "hello world!",
+            );
         }
 
         let lines: Vec<&str> = vec!["Apple fruit", "Banana", "Cherry pie", "Oreos"];
-        multi_line_text(&mut app, Position { x: 100.0, y: 100.0, scale: 50.0 }, 50.0, lines);
+        multi_line_text(
+            &mut app,
+            Position {
+                x: 100.0,
+                y: 100.0,
+                scale: 50.0,
+            },
+            50.0,
+            lines,
+        );
 
-        /* 
+        /*
         let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
         println!("is left down? {}", left_down);
 
@@ -43,7 +60,7 @@ fn main() {
             || println!("Button clicked!")
         );
         */
-        /* 
+        /*
         let position = Position { x: 100.0, y: 200.0, scale: 20.0 };
 
         let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
@@ -66,11 +83,11 @@ fn main() {
         use rusttype::{point, Font, Scale};
         let font_data = app.font_path;
         let font = Font::try_from_bytes(font_data).expect("Error loading font");
-    
+
         // settings
         let scale1 = Scale::uniform(position.scale); // font size
         let start_point = point(position.x, position.y); // starting position of the text
-    
+
         // rasterize the text
         let glyphs: Vec<_> = font.layout("text", scale1, start_point).collect();
         for glyph in glyphs {
@@ -78,7 +95,7 @@ fn main() {
                 glyph.draw(|x, y, v| {
                     let px = (bounding_box.min.x + x as i32) as usize;
                     let py = (bounding_box.min.y + y as i32) as usize;
-    
+
                     if px < app.width && py < app.height {
                         let color = (v * 255.0) as u32;
                         app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
@@ -107,14 +124,18 @@ fn main() {
 
         use rusttype::{point, Font, Scale};
 
-        let position = Position { x: 100.0, y: 200.0, scale: 20.0 };
+        let position = Position {
+            x: 100.0,
+            y: 200.0,
+            scale: 20.0,
+        };
 
         let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
 
         let mouse_pos = app
-        .window
-        .get_mouse_pos(minifb::MouseMode::Clamp)
-        .unwrap_or((0.0, 0.0));
+            .window
+            .get_mouse_pos(minifb::MouseMode::Clamp)
+            .unwrap_or((0.0, 0.0));
         let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
 
         fn calculate_text_dimensions(font: &Font, text: &str, scale: Scale) -> (f32, f32) {
@@ -211,6 +232,5 @@ fn main() {
                 });
             }
         }
-
     });
 }

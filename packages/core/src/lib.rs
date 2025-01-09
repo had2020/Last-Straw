@@ -46,12 +46,12 @@ impl App {
             input_change: false,
             height: height,
             width: width,
-            font_path: include_bytes!("../assets/fonts/FiraSans-Regular.ttf"), 
+            font_path: include_bytes!("../assets/fonts/FiraSans-Regular.ttf"),
         }
     }
 }
 
-pub fn defined_window( width: usize, height: usize, name: &str) -> (Window, Vec<u32>) {
+pub fn defined_window(width: usize, height: usize, name: &str) -> (Window, Vec<u32>) {
     // Initialize the pixel buffer
     let mut buffer: Vec<u32> = vec![0; width * height];
 
@@ -94,49 +94,49 @@ pub fn fps_limit(fps; u64) { //let frame_start = Instant::now();
 
 pub fn hex_color(name: &str) -> u32 {
     let new_color: u32 = match name {
-        "Green" => 0xFF_00FF00, 
-        "Red" => 0xFF_FF0000,   
-        "Blue" => 0xFF_0000FF,  
-        "Yellow" => 0xFF_FFFF00, 
-        "Cyan" => 0xFF_00FFFF,  
-        "Magenta" => 0xFF_FF00FF, 
-        "White" => 0xFF_FFFFFF,  
-        "Black" => 0xFF_000000,  
-        "Gray" => 0xFF_808080,  
-        "Orange" => 0xFF_FFA500, 
+        "Green" => 0xFF_00FF00,
+        "Red" => 0xFF_FF0000,
+        "Blue" => 0xFF_0000FF,
+        "Yellow" => 0xFF_FFFF00,
+        "Cyan" => 0xFF_00FFFF,
+        "Magenta" => 0xFF_FF00FF,
+        "White" => 0xFF_FFFFFF,
+        "Black" => 0xFF_000000,
+        "Gray" => 0xFF_808080,
+        "Orange" => 0xFF_FFA500,
         "Purple" => 0xFF_800080,
-        "Pink" => 0xFF_FFC0CB,   
-        "Brown" => 0xFF_A52A2A,  
-        "Light Gray" => 0xFF_D3D3D3, 
-        "Light Blue" => 0xFF_ADD8E6, 
-        "Dark Blue" => 0xFF_00008B,   
-        "Beige" => 0xFF_F5F5DC,       
-        "Teal" => 0xFF_008080,       
-        "Lavender" => 0xFF_E6E6FA,   
-        "Ivory" => 0xFF_FFFFF0,       
-        "Mint" => 0xFF_98FF98,    
-        "Coral" => 0xFF_FF7F50,     
-        "Navy" => 0xFF_000080,  
-        "Sky Blue" => 0xFF_87CEEB, 
-        "Sea Green" => 0xFF_2E8B57,   
-        "Forest Green" => 0xFF_228B22,     
-        "Dark Gray" => 0xFF_A9A9A9,      
-        "Slate Gray" => 0xFF_708090,     
-        "Charcoal" => 0xFF_36454F,       
-        "Jet Black" => 0xFF_343434,      
-        "Gunmetal" => 0xFF_2A3439,       
-        "Dark Slate Blue" => 0xFF_483D8B, 
-        "Midnight Blue" => 0xFF_191970,  
-        "Deep Navy" => 0xFF_1B1F3B,      
-        "Dark Olive Green" => 0xFF_556B2F, 
-        "Deep Forest Green" => 0xFF_1A2E1A, 
-        "Maroon" => 0xFF_800000,         
-        "Deep Burgundy" => 0xFF_4A0000,  
+        "Pink" => 0xFF_FFC0CB,
+        "Brown" => 0xFF_A52A2A,
+        "Light Gray" => 0xFF_D3D3D3,
+        "Light Blue" => 0xFF_ADD8E6,
+        "Dark Blue" => 0xFF_00008B,
+        "Beige" => 0xFF_F5F5DC,
+        "Teal" => 0xFF_008080,
+        "Lavender" => 0xFF_E6E6FA,
+        "Ivory" => 0xFF_FFFFF0,
+        "Mint" => 0xFF_98FF98,
+        "Coral" => 0xFF_FF7F50,
+        "Navy" => 0xFF_000080,
+        "Sky Blue" => 0xFF_87CEEB,
+        "Sea Green" => 0xFF_2E8B57,
+        "Forest Green" => 0xFF_228B22,
+        "Dark Gray" => 0xFF_A9A9A9,
+        "Slate Gray" => 0xFF_708090,
+        "Charcoal" => 0xFF_36454F,
+        "Jet Black" => 0xFF_343434,
+        "Gunmetal" => 0xFF_2A3439,
+        "Dark Slate Blue" => 0xFF_483D8B,
+        "Midnight Blue" => 0xFF_191970,
+        "Deep Navy" => 0xFF_1B1F3B,
+        "Dark Olive Green" => 0xFF_556B2F,
+        "Deep Forest Green" => 0xFF_1A2E1A,
+        "Maroon" => 0xFF_800000,
+        "Deep Burgundy" => 0xFF_4A0000,
         "Dark Chocolate" => 0xFF_3E2723,
-        "Dark Copper" => 0xFF_4E3629,    
-        "Onyx" => 0xFF_353839,           
-        "Obsidian" => 0xFF_1C1C1C, // Great for dark mode   
-        _ => 0xFF_FFC0CB, // defaults to pink if broken
+        "Dark Copper" => 0xFF_4E3629,
+        "Onyx" => 0xFF_353839,
+        "Obsidian" => 0xFF_1C1C1C, // Great for dark mode
+        _ => 0xFF_FFC0CB,          // defaults to pink if broken
     };
     new_color
 }
@@ -266,7 +266,7 @@ where
         .for_each(|key| handle_key(key));
 }
 
-/* 
+/*
 //TODO window Scrolling
 pub fn handle_mouse_scroll_event_asx(scroll: f64) {
     let scroll_str = scroll.to_string();
@@ -313,7 +313,13 @@ pub fn single_line_text(app: &mut App, position: Position, text: &str) {
     }
 }
 
-pub fn rasterize_text(font:&Font<'_>, line:&str, scale:Scale, start_point:rusttype::Point<f32>, app: &mut App) {
+pub fn rasterize_text(
+    font: &Font<'_>,
+    line: &str,
+    scale: Scale,
+    start_point: rusttype::Point<f32>,
+    app: &mut App,
+) {
     let glyphs: Vec<_> = font.layout(line, scale, start_point).collect();
     for glyph in glyphs {
         if let Some(bounding_box) = glyph.pixel_bounding_box() {
@@ -341,7 +347,7 @@ pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Ve
     iteration_position = point(position.x, position.y);
 
     for line in text.iter() {
-        iteration_position =  point(iteration_position.x, iteration_position.y + spacing);
+        iteration_position = point(iteration_position.x, iteration_position.y + spacing);
         rasterize_text(&font, line, scale, iteration_position, app);
     }
 }
@@ -378,10 +384,10 @@ for y in y_start..y_start + height {
     }
 }
 */
-/* 
+/*
 pub fn button<F>(app: &mut App, position: Position, text: &str, on_click: F)
 where
-    F: FnOnce(), 
+    F: FnOnce(),
 {
     let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
 
@@ -422,7 +428,7 @@ where
 }
 */
 
-/* 
+/*
 #[macro_export]
 macro_rules! button {
     ($app:expr, $position:expr, $text:expr, $on_click:expr) => {{
@@ -475,7 +481,16 @@ macro_rules! button {
 }
 */
 
-pub fn draw_rectangle(buffer: &mut Vec<u32>, width: usize, height: usize, x: f32, y: f32, rect_width: f32, rect_height: f32, color: u32) {
+pub fn draw_rectangle(
+    buffer: &mut Vec<u32>,
+    width: usize,
+    height: usize,
+    x: f32,
+    y: f32,
+    rect_width: f32,
+    rect_height: f32,
+    color: u32,
+) {
     let x_start = x as usize;
     let y_start = y as usize;
     let x_end = (x + rect_width) as usize;
