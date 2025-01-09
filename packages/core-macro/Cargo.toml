@@ -13,6 +13,7 @@ fs = "0.0.5"
 glfw = "0.59.0"
 laststraw-core= { path = "../core" }
 quote = "1.0.38"
+rusttype = "0.9.3"
 #syn = "2.0.92"
 syn = { version = "2.0.92", features = ["full"] }
 

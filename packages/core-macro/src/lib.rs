@@ -1,7 +1,8 @@
 extern crate proc_macro;
+use laststraw_core::Position;
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, Block};
+use syn::{parse_macro_input, Block, Ident, ItemStruct};
 
 // TODO update change on file save
 
@@ -15,6 +16,7 @@ pub fn asx(input: TokenStream) -> TokenStream {
             let mut _generated_block_wrapper = || {
 
                 while app.window.is_open() && !app.should_close {
+
                     #block
                     // TODO add optional pause if no input event
 
@@ -28,6 +30,8 @@ pub fn asx(input: TokenStream) -> TokenStream {
     TokenStream::from(expanded)
 }
 
+use rusttype::{point, Font, Scale};
+
 #[proc_macro]
 pub fn button(input: TokenStream) -> TokenStream {
     let block = parse_macro_input!(input as Block);
@@ -35,7 +39,10 @@ pub fn button(input: TokenStream) -> TokenStream {
     let expanded = quote! {
         {
             let mut _generated_block_wrapper = || {
-                // any outside parameters can be used here
+                if set_button_position1 = true {
+                    #block
+                }
+                //#block
             };
             _generated_block_wrapper();
         }

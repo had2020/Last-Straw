@@ -375,6 +375,7 @@ dependencies = [
  "glfw",
  "laststraw-core",
  "quote",
+ "rusttype",
  "syn",
 ]
 

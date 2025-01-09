@@ -20,7 +20,7 @@ mod tests {
 }
  */
 
-// TODO consie tests maybe, or better documentation
+// TODO console tests maybe, or better documentation
 
 // TODO at some point write some amazing documentation for everything
 
@@ -78,20 +78,6 @@ pub fn close(app: &mut App) {
     app.should_close = true;
 }
 
-/* TODO fps timing
-use std::time::{Duration, Instant};
-
-pub fn fps_limit(fps; u64) { //let frame_start = Instant::now();
-    const frame_duration: Duration = Duration::from_secs(1) / fps;
-    let frame_time = frame_start.elapsed();
-    if frame_time < frame_duration {
-        std::thread::sleep(frame_duration - frame_time);
-    }
-}
-    */
-
-//TODO put colors in function that takes &str for buffer color ie whats down here and or make rgb mode with transpareance
-
 pub fn hex_color(name: &str) -> u32 {
     let new_color: u32 = match name {
         "Green" => 0xFF_00FF00,
@@ -136,7 +122,7 @@ pub fn hex_color(name: &str) -> u32 {
         "Dark Copper" => 0xFF_4E3629,
         "Onyx" => 0xFF_353839,
         "Obsidian" => 0xFF_1C1C1C, // Great for dark mode
-        _ => 0xFF_FFC0CB,          // defaults to pink if broken
+        _ => 0xFF_FFC0CB,          // defaults to pink if invaild color text
     };
     new_color
 }
@@ -277,8 +263,6 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
 }
 */
 
-// window.set_background_color(255, 0, 0);
-
 use rusttype::{point, Font, Scale};
 const FONT_BYTES: &[u8] = include_bytes!("../assets/fonts/FiraSans-Regular.ttf"); // always having font loaded in package
 
@@ -377,110 +361,6 @@ pub fn editable_single_line(app: &mut App, position: Position, text: &str) {
     }
 }
 
-/*
-for y in y_start..y_start + height {
-    for x in x_start..x_start + width {
-        buffer[y * WIDTH + x] = color;
-    }
-}
-*/
-/*
-pub fn button<F>(app: &mut App, position: Position, text: &str, on_click: F)
-where
-    F: FnOnce(),
-{
-    let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
-
-    let mouse_pos = app.window.get_mouse_pos(minifb::MouseMode::Clamp).unwrap_or((0.0, 0.0));
-    let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
-
-    let is_within_button = mouse_x >= position.x
-    && mouse_x <= position.x + (text.len() as f32 * position.scale as f32)
-    && mouse_y >= position.y
-    && mouse_y <= position.y + position.scale as f32;
-
-    if left_down == true && is_within_button{
-        on_click();
-    }
-
-    let font_data = FONT_BYTES;
-    let font = Font::try_from_bytes(font_data).expect("Error loading font");
-
-    // settings
-    let scale1 = Scale::uniform(position.scale); // font size
-    let start_point = point(position.x, position.y); // starting position of the text
-
-    // rasterize the text
-    let glyphs: Vec<_> = font.layout(text, scale1, start_point).collect();
-    for glyph in glyphs {
-        if let Some(bounding_box) = glyph.pixel_bounding_box() {
-            glyph.draw(|x, y, v| {
-                let px = (bounding_box.min.x + x as i32) as usize;
-                let py = (bounding_box.min.y + y as i32) as usize;
-
-                if px < app.width && py < app.height {
-                    let color = (v * 255.0) as u32;
-                    app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
-                }
-            });
-        }
-    }
-}
-*/
-
-/*
-#[macro_export]
-macro_rules! button {
-    ($app:expr, $position:expr, $text:expr, $on_click:expr) => {{
-
-        app_copy: laststraw::App = $app;
-
-        use rusttype::{point, Font, Scale};
-
-        let left_down = $app.window.get_mouse_down(minifb::MouseButton::Left);
-
-        let mouse_pos = $app
-            .window
-            .get_mouse_pos(minifb::MouseMode::Clamp)
-            .unwrap_or((0.0, 0.0));
-        let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
-
-        let is_within_button = mouse_x >= $position.x
-            && mouse_x <= $position.x + ($text.len() as f32 * $position.scale as f32)
-            && mouse_y >= $position.y
-            && mouse_y <= $position.y + $position.scale as f32;
-
-        if left_down && is_within_button {
-            $on_click();
-        }
-
-        let font_data = $app.font_path;
-        let font = Font::try_from_bytes(font_data).expect("Error loading font");
-
-        // settings
-        let scale1 = Scale::uniform($position.scale); // font size
-        let start_point = point($position.x, $position.y); // starting position of the text
-
-        // rasterize the text
-        let glyphs: Vec<_> = font.layout($text, scale1, start_point).collect();
-        for glyph in glyphs {
-            if let Some(bounding_box) = glyph.pixel_bounding_box() {
-                glyph.draw(|x, y, v| {
-                    let px = (bounding_box.min.x + x as i32) as usize;
-                    let py = (bounding_box.min.y + y as i32) as usize;
-
-                    if px < $app.width && py < $app.height {
-                        let color = (v * 255.0) as u32;
-                        $app.buffer[py * $app.width + px] =
-                            (color << 16) | (color << 8) | color;
-                    }
-                });
-            }
-        }
-    }};
-}
-*/
-
 pub fn draw_rectangle(
     buffer: &mut Vec<u32>,
     width: usize,
@@ -506,4 +386,11 @@ pub fn draw_rectangle(
             }
         }
     }
+}
+
+#[macro_export]
+macro_rules! set_button_position {
+    ($name:expr) => {
+        let set_button_position1 = $name; // use app struct
+    };
 }
