@@ -33,7 +33,7 @@ pub fn asx(input: TokenStream) -> TokenStream {
 use rusttype::{point, Font, Scale};
 
 #[proc_macro]
-pub fn button_proc(input: TokenStream) -> TokenStream {
+pub fn button(input: TokenStream) -> TokenStream {
     let block = parse_macro_input!(input as Block);
 
     let expanded = quote! {
@@ -54,12 +54,56 @@ pub fn button_proc(input: TokenStream) -> TokenStream {
                     let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
 
                     let font_data = &app.font_path;
-                    let font = Font::try_from_bytes(font_data).expect("Error loading font");
-                    let scale = Scale::uniform(position.scale); // font size
+                    let font = rusttype::Font::try_from_bytes(font_data).expect("Error loading font");
+                    let scale = rusttype::Scale::uniform(position.scale); // font size
                     let text_value = &app.next_button_text;
-                    let text = "{text_value}";
+                    let text = text_value;
+
+                    // dimensions
+                    let (text_width, text_height) = calculate_button_text_dimensions(&font, text, scale);
+
+                    // check if mouse within
+                    let is_within_button = mouse_x >= position.x
+                        && mouse_x <= position.x + text_width
+                        && mouse_y >= position.y
+                        && mouse_y <= position.y + text_height;
+
+                    if left_down && is_within_button {
+                        button_pressed = true
+                    }
+
+                    // outline box logic
+                    let highlight_color = 0xFF0000; // TODO custom box color and outline or draw propertys
+                    draw_rectangle(
+                        &mut app.buffer,
+                        app.width,
+                        app.height,
+                        position.x,
+                        position.y,
+                        text_width,
+                        text_height,
+                        highlight_color,
+                    );
+
+                    // rasterize and draw text
+                    let start_point = rusttype::point(position.x, position.y);
+                    let glyphs: Vec<_> = font.layout(text, scale, start_point).collect();
+                    for glyph in glyphs {
+                        if let Some(bounding_box) = glyph.pixel_bounding_box() {
+                            glyph.draw(|x, y, v| {
+                                let px = (bounding_box.min.x + x as i32) as usize;
+                                let py = (bounding_box.min.y + y as i32) as usize;
+
+                                if px < app.width && py < app.height {
+                                    let color = (v * 255.0) as u32;
+                                    app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
+                                }
+                            });
+                        }
+                    }
 
                     if button_pressed {
+                        button_pressed = false;
                         #block
                     }
                 }

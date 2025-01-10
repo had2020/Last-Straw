@@ -433,17 +433,3 @@ pub fn calculate_button_text_dimensions(font: &Font, text: &str, scale: Scale) -
     let height = scale.y; // esimated font, scale, height
     (width, height)
 }
-
-pub struct Button {
-    pub position: Position,
-    pub text: String,
-}
-
-impl Button {
-    pub fn set(text: &str, position: Position) -> Self {
-        Button {
-            position: position,
-            text: text.to_string(),
-        }
-    }
-}
