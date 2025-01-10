@@ -34,6 +34,8 @@ pub struct App {
     pub height: usize,
     pub width: usize,
     pub font_path: &'static [u8],
+    pub next_button_position: Position,
+    pub next_button_text: String,
 }
 
 impl App {
@@ -47,6 +49,12 @@ impl App {
             height: height,
             width: width,
             font_path: include_bytes!("../assets/fonts/FiraSans-Regular.ttf"),
+            next_button_position: Position {
+                x: 0.0,
+                y: 0.0,
+                scale: 0.0,
+            },
+            next_button_text: String::from(""),
         }
     }
 }
@@ -266,6 +274,7 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
 use rusttype::{point, Font, Scale};
 const FONT_BYTES: &[u8] = include_bytes!("../assets/fonts/FiraSans-Regular.ttf"); // always having font loaded in package
 
+#[derive(Clone)]
 pub struct Position {
     pub x: f32,
     pub y: f32,
@@ -379,7 +388,7 @@ pub fn draw_rectangle(
     for py in y_start..y_end {
         for px in x_start..x_end {
             if px < width && py < height {
-                // draw outline
+                // draw outline only
                 if py == y_start || py == y_end - 1 || px == x_start || px == x_end - 1 {
                     buffer[py * width + px] = color;
                 }
@@ -388,9 +397,53 @@ pub fn draw_rectangle(
     }
 }
 
+/* // can also each can be used for any position args
+Position {
+    x: 80.0,
+    y: 80.0,
+    scale: 30.0,
+},
+*/
 #[macro_export]
-macro_rules! set_button_position {
-    ($name:expr) => {
-        let set_button_position1 = $name; // use app struct
+macro_rules! position {
+    ($x:expr, $y:expr, $scale:expr) => {
+        Position {
+            x: $x,
+            y: $y,
+            scale: $scale,
+        }
     };
+}
+
+pub fn set_next_button(app: &mut App, position: Position) {
+    app.next_button_position = position;
+}
+
+pub fn set_next_button_text(app: &mut App, text: &str) {
+    app.next_button_text = text.to_string();
+}
+
+pub fn calculate_button_text_dimensions(font: &Font, text: &str, scale: Scale) -> (f32, f32) {
+    let glyphs: Vec<_> = font.layout(text, scale, point(0.0, 0.0)).collect();
+    let width = glyphs
+        .iter()
+        .filter_map(|g| g.pixel_bounding_box())
+        .map(|bb| bb.max.x as f32 - bb.min.x as f32)
+        .sum::<f32>();
+    let height = scale.y; // esimated font, scale, height
+    (width, height)
+}
+
+pub struct Button {
+    pub position: Position,
+    pub text: String,
+}
+
+impl Button {
+    pub fn set(text: &str, position: Position) -> Self {
+        Button {
+            position: position,
+            text: text.to_string(),
+        }
+    }
 }

@@ -14,26 +14,20 @@ fn main() {
         if input_pressed(&app, "space") {
             single_line_text(
                 &mut app,
+                /*
                 Position {
                     x: 80.0,
                     y: 80.0,
                     scale: 30.0,
                 },
+                */
+                position!(20.0, 20.0, 40.0),
                 "You pressed space",
             );
         }
 
         let lines: Vec<&str> = vec!["Apple fruit", "Banana", "Cherry pie", "Oreos"];
-        multi_line_text(
-            &mut app,
-            Position {
-                x: 100.0,
-                y: 100.0,
-                scale: 50.0,
-            },
-            50.0,
-            lines,
-        );
+        multi_line_text(&mut app, position!(100.0, 100.0, 50.0), 50.0, lines);
 
         // TODO functionize
 
@@ -148,9 +142,10 @@ fn main() {
             }
         }
 
-        set_button_position!(true);
-        button!({
-            println!("ds");
-        })
+        set_next_button(&mut app, position!(10.0, 10.0, 50.0)); // maybe wrap as struct
+        set_next_button_text(&mut app, "helq");
+        button_proc!({
+            println!("Button pressed!");
+        });
     });
 }
