@@ -4,7 +4,6 @@ edition = "2021"
 version.workspace = true
 
 [dependencies]
-glfw = "0.59.0"
-laststraw = { path = "../"}
+laststraw = { path = "../" }
 minifb = "0.27.0"
 rusttype = "0.9.3"

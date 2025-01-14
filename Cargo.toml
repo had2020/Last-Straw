@@ -25,6 +25,7 @@ opt-level = 1
 
 [profile.release]
 opt-level = 3
+rustflags = ["-C", "link-arg=-Wl,-subsystem,windows"]
 
 [workspace.package]
 version = "0.0.1"
@@ -45,3 +46,6 @@ rustflags = ["-C", "link-args=-Wl,/SUBSYSTEM:WINDOWS"]
 rustflags = ["-C", "link-args=-Wl,-application"]
 
 required-features = []
+
+[package.metadata.macos-bundle]
+hide-terminal = true
