@@ -1,27 +1,3 @@
-//!  comments item containing the comment
-
-// cargo test
-// doc gen cargo doc --open
-
-/*  TODO add tests like this!
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
- */
-
-// TODO console tests maybe, or better documentation
-
 // TODO at some point write some amazing documentation for everything
 
 use minifb::{Key, Window, WindowOptions};
@@ -345,7 +321,7 @@ pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Ve
     }
 }
 
-pub fn editable_single_line(app: &mut App, position: Position, text: &str) {
+pub fn editable_single_line(app: &mut App, position: Position, initial_text: &str) {
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
 
@@ -354,7 +330,7 @@ pub fn editable_single_line(app: &mut App, position: Position, text: &str) {
     let start_point = point(position.x, position.y); // starting position of the text
 
     // rasterize the text
-    let glyphs: Vec<_> = font.layout(text, scale1, start_point).collect();
+    let glyphs: Vec<_> = font.layout(initial_text, scale1, start_point).collect();
     for glyph in glyphs {
         if let Some(bounding_box) = glyph.pixel_bounding_box() {
             glyph.draw(|x, y, v| {
@@ -432,4 +408,18 @@ pub fn calculate_button_text_dimensions(font: &Font, text: &str, scale: Scale) -
         .sum::<f32>();
     let height = scale.y; // esimated font, scale, height
     (width, height)
+}
+
+pub fn dev_mode() -> bool {
+    #[cfg(debug_assertions)]
+    {
+        println!("(likely during development).");
+        return true;
+    }
+
+    #[cfg(not(debug_assertions))]
+    {
+        println!("(compiled binary).");
+        return false;
+    }
 }

@@ -13,6 +13,7 @@ pub fn asx(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         {
+            let is_dev_mode = dev_mode();
             let mut _generated_block_wrapper = || {
 
                 while app.window.is_open() && !app.should_close {

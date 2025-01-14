@@ -20,7 +20,15 @@ fn main() {
         set_next_button(&mut app, position!(30.0, 30.0, 30.0)); // maybe wrap as struct
         set_next_button_text(&mut app, "helq");
         button!({
-            println!("Button pressed!");
+            single_line_text(
+                &mut app,
+                position!(20.0, 20.0, 40.0),
+                "You clicked the button",
+            );
         });
+
+        //editable_single_line(&mut app, position!(200.0, 50.0, 10.0), " ");
     });
+
+    println!("app closed after window code.");
 }
