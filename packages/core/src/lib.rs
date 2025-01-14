@@ -16,6 +16,8 @@ pub struct App {
 
 impl App {
     pub fn new(width: usize, height: usize, title: &str) -> Self {
+        #![cfg_attr(target_os = "windows", windows_subsystem = "windows")] // hiding cmd, windows //TODO better build system
+
         let (window, buffer) = defined_window(width, height, title);
         App {
             window,

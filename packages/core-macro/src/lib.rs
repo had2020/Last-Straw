@@ -12,7 +12,10 @@ pub fn asx(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         {
-            let is_dev_mode = dev_mode();
+            let is_dev_mode: bool = dev_mode();
+            if is_dev_mode {
+                //std::process::exit(1);
+            }
             let mut _generated_block_wrapper = || {
 
                 while app.window.is_open() && !app.should_close {
@@ -29,7 +32,6 @@ pub fn asx(input: TokenStream) -> TokenStream {
 
     TokenStream::from(expanded)
 }
-
 
 #[proc_macro]
 pub fn button(input: TokenStream) -> TokenStream {

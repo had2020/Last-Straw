@@ -10,7 +10,6 @@ proc-macro = true
 
 [dependencies]
 fs = "0.0.5"
-glfw = "0.59.0"
 laststraw-core = { path = "../core" }
 quote = "1.0.38"
 rusttype = "0.9.3"
