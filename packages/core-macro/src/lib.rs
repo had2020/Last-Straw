@@ -1,8 +1,7 @@
 extern crate proc_macro;
-use laststraw_core::Position;
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, Block, Ident, ItemStruct};
+use syn::{parse_macro_input, Block};
 
 // TODO update change on file save
 
@@ -31,7 +30,6 @@ pub fn asx(input: TokenStream) -> TokenStream {
     TokenStream::from(expanded)
 }
 
-use rusttype::{point, Font, Scale};
 
 #[proc_macro]
 pub fn button(input: TokenStream) -> TokenStream {
