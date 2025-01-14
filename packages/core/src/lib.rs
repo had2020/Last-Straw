@@ -37,10 +37,10 @@ impl App {
 
 pub fn defined_window(width: usize, height: usize, name: &str) -> (Window, Vec<u32>) {
     // Initialize the pixel buffer
-    let mut buffer: Vec<u32> = vec![0; width * height];
+    let buffer: Vec<u32> = vec![0; width * height];
 
     // Create a window
-    let mut window = Window::new(
+    let window = Window::new(
         name,
         width,
         height,

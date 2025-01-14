@@ -1,21 +1,21 @@
-[workspace] # Not useful 
+[workspace] # Not useful
 members = [
     "example-project",
-    #"packages/*" 
+    #"packages/*"
     "packages/core",
-    "packages/core-macro"
+    "packages/core-macro",
     #"laststrawcore",
     #"laststraw-core-macro"
 
 ]
 
-[workspace.dependencies] # Not useful 
-laststraw-core= { path = "packages/core" }
-laststraw-core-macro= { path = "packages/core-macro" }
+[workspace.dependencies] # Not useful
+laststraw-core = { path = "packages/core" }
+laststraw-core-macro = { path = "packages/core-macro" }
 
 [dependencies]
-laststraw-core= { path = "packages/core" }
-laststraw-core-macro= { path = "packages/core-macro" }
+laststraw-core = { path = "packages/core" }
+laststraw-core-macro = { path = "packages/core-macro" }
 
 # External
 glfw = "0.59.0"
@@ -37,3 +37,6 @@ name = "laststraw"
 version = "0.1.0"
 edition = "2021"
 authors = ["Hadrian Lazic"]
+
+[target.'cfg(windows)']
+rustflags = ["-C", "link-args=-Wl,/SUBSYSTEM:WINDOWS"]
