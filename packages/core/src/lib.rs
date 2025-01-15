@@ -14,6 +14,7 @@ pub struct App {
     pub next_button_text: String,
     pub current_text_edit_id: usize,
     pub selected_text_edit_id: usize,
+    pub input_text_storing: Vec<String>,
 }
 
 impl App {
@@ -35,6 +36,7 @@ impl App {
             next_button_text: String::from(""),
             current_text_edit_id: 0,
             selected_text_edit_id: 0,
+            input_text_storing: Vec::new(),
         }
     }
 }
@@ -126,9 +128,7 @@ pub fn set_window_color(app: &mut App, color: &str) {
 
 use std::collections::HashMap;
 
-pub fn key_hash_map
-
-pub fn input_pressed(app: &App, key: &str) -> bool {
+pub fn string_to_key_hash_map<'a>() -> HashMap<&'a str, Key> {
     let key_mappings: HashMap<&str, Key> = [
         ("esc", Key::Escape),
         ("1", Key::Key1),
@@ -217,7 +217,20 @@ pub fn input_pressed(app: &App, key: &str) -> bool {
     .iter()
     .cloned()
     .collect();
+    key_mappings
+}
 
+pub fn key_to_string_hash_map<'a>() -> HashMap<Key, &'a str> {
+    let flipped_mappings: HashMap<Key, &str> = string_to_key_hash_map()
+        .into_iter()
+        .map(|(key, value)| (value, key))
+        .collect();
+
+    flipped_mappings
+}
+
+pub fn input_pressed(app: &App, key: &str) -> bool {
+    let key_mappings = string_to_key_hash_map();
     if let Some(&minifb_key) = key_mappings.get(key) {
         app.window.is_key_down(minifb_key)
     } else {
@@ -225,17 +238,6 @@ pub fn input_pressed(app: &App, key: &str) -> bool {
     }
 }
 
-/* How Use, TODO incapsulate
-    keys_down(&app, |key| {
-        match key {
-            minifb::Key::W => println!("W key pressed"),
-            minifb::Key::A => println!("A key pressed"),
-            minifb::Key::S => println!("S key pressed"),
-            minifb::Key::D => println!("D key pressed"),
-            _ => println!("{:?} key pressed", key),
-            }
-        });
-*/
 pub fn keys_down<F>(app: &App, handle_key: F)
 where
     F: Fn(&minifb::Key),
@@ -501,13 +503,9 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
     } else {
         app.window.set_cursor_style(CursorStyle::Ibeam);
 
-        app.window
-            .get_keys_pressed(KeyRepeat::No)
-            .iter()
-            .for_each(|key| match key {
-                Key::W => println!("pressed w"),
-                Key::T => println!("pressed t"),
-                _ => (),
-            });
+        let key_mappings = key_to_string_hash_map();
+        for key in app.window.get_keys_pressed(KeyRepeat::No).iter() {
+            println!("{:?}", key_mappings.get(key)); //TODO handle store
+        }
     }
 }
