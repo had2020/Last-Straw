@@ -124,11 +124,9 @@ pub fn set_window_color(app: &mut App, color: &str) {
     }
 }
 
-pub fn input_match(key_name: &str) -> Key {
-    Key::A
-}
-
 use std::collections::HashMap;
+
+pub fn key_hash_map
 
 pub fn input_pressed(app: &App, key: &str) -> bool {
     let key_mappings: HashMap<&str, Key> = [
