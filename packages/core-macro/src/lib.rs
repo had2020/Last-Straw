@@ -16,9 +16,23 @@ pub fn asx(input: TokenStream) -> TokenStream {
             if is_dev_mode {
                 //std::process::exit(1);
             }
+
+            let mut last_window_size = app.window.get_size();
+
             let mut _generated_block_wrapper = || {
 
                 while app.window.is_open() && !app.should_close {
+
+                    app.current_text_edit_id = 0;
+
+                    let current_window_size = app.window.get_size(); //TODO better resize
+                    if current_window_size != last_window_size {
+                        let (new_width, new_height) = current_window_size;
+                        app.buffer.resize(new_width * new_height, 0);
+                        app.width = new_width;
+                        app.height = new_height;
+                        last_window_size = current_window_size;
+                    }
 
                     #block
                     // TODO add optional pause if no input event
@@ -33,6 +47,7 @@ pub fn asx(input: TokenStream) -> TokenStream {
     TokenStream::from(expanded)
 }
 
+// TODO under text button, and more colors, also outline and none outline
 #[proc_macro]
 pub fn button(input: TokenStream) -> TokenStream {
     let block = parse_macro_input!(input as Block);

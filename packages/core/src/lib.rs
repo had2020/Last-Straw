@@ -12,12 +12,12 @@ pub struct App {
     pub font_path: &'static [u8],
     pub next_button_position: Position,
     pub next_button_text: String,
+    pub current_text_edit_id: usize,
+    pub selected_text_edit_id: usize,
 }
 
 impl App {
     pub fn new(width: usize, height: usize, title: &str) -> Self {
-        #![cfg_attr(target_os = "windows", windows_subsystem = "windows")] // hiding cmd, windows //TODO better build system
-
         let (window, buffer) = defined_window(width, height, title);
         App {
             window,
@@ -33,6 +33,8 @@ impl App {
                 scale: 0.0,
             },
             next_button_text: String::from(""),
+            current_text_edit_id: 0,
+            selected_text_edit_id: 0,
         }
     }
 }
@@ -277,7 +279,7 @@ pub fn single_line_text(app: &mut App, position: Position, text: &str) {
                 let py = (bounding_box.min.y + y as i32) as usize;
 
                 if px < app.width && py < app.height {
-                    let color = (v * 255.0) as u32; // grayscale value
+                    let color = (v * 255.0) as u32; // TODO custom color
                     app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
                 }
             });
@@ -308,6 +310,7 @@ pub fn rasterize_text(
     }
 }
 
+// TODO custom color
 pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Vec<&str>) {
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
@@ -321,31 +324,6 @@ pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Ve
     for line in text.iter() {
         iteration_position = point(iteration_position.x, iteration_position.y + spacing);
         rasterize_text(&font, line, scale, iteration_position, app);
-    }
-}
-
-pub fn editable_single_line(app: &mut App, position: Position, initial_text: &str) {
-    let font_data = FONT_BYTES;
-    let font = Font::try_from_bytes(font_data).expect("Error loading font");
-
-    // settings
-    let scale1 = Scale::uniform(position.scale); // font size
-    let start_point = point(position.x, position.y); // starting position of the text
-
-    // rasterize the text
-    let glyphs: Vec<_> = font.layout(initial_text, scale1, start_point).collect();
-    for glyph in glyphs {
-        if let Some(bounding_box) = glyph.pixel_bounding_box() {
-            glyph.draw(|x, y, v| {
-                let px = (bounding_box.min.x + x as i32) as usize;
-                let py = (bounding_box.min.y + y as i32) as usize;
-
-                if px < app.width && py < app.height {
-                    let color = (v * 255.0) as u32; // grayscale value
-                    app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
-                }
-            });
-        }
     }
 }
 
@@ -404,25 +382,119 @@ pub fn set_next_button_text(app: &mut App, text: &str) {
 
 pub fn calculate_button_text_dimensions(font: &Font, text: &str, scale: Scale) -> (f32, f32) {
     let glyphs: Vec<_> = font.layout(text, scale, point(0.0, 0.0)).collect();
+
+    // total width based on glyph positions
     let width = glyphs
         .iter()
-        .filter_map(|g| g.pixel_bounding_box())
-        .map(|bb| bb.max.x as f32 - bb.min.x as f32)
-        .sum::<f32>();
-    let height = scale.y; // esimated font, scale, height
+        .last()
+        .and_then(|g| g.pixel_bounding_box().map(|bb| bb.max.x as f32))
+        .unwrap_or(0.0)
+        - glyphs
+            .iter()
+            .next()
+            .and_then(|g| g.pixel_bounding_box().map(|bb| bb.min.x as f32))
+            .unwrap_or(0.0);
+
+    // height using font metrics
+    let v_metrics = font.v_metrics(scale);
+    let height = v_metrics.ascent - v_metrics.descent + v_metrics.line_gap;
+
     (width, height)
 }
 
+// TODO better method, and hot-reloading
 pub fn dev_mode() -> bool {
     #[cfg(debug_assertions)]
     {
-        println!("(likely during development).");
+        //println!("(likely during development).");
         return true;
     }
 
     #[cfg(not(debug_assertions))]
     {
-        println!("(compiled binary).");
+        //println!("(compiled binary).");
         return false;
+    }
+}
+
+use minifb::CursorStyle;
+
+// TODO highlight or no highlight, also handling text overflow
+pub fn editable_single_line(app: &mut App, position: Position, initial_text: &str) {
+    app.current_text_edit_id += 1;
+
+    let mut button_pressed = false;
+
+    let none_selected = app.selected_text_edit_id == 0;
+    let selected = app.selected_text_edit_id == app.current_text_edit_id && !none_selected;
+    let non_empty_position = position.x != 0.0 && position.y != 0.0 && position.scale != 0.0;
+
+    if non_empty_position && !selected {
+        let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
+
+        let mouse_pos = app
+            .window
+            .get_mouse_pos(minifb::MouseMode::Clamp)
+            .unwrap_or((0.0, 0.0));
+        let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
+
+        let font_data = &app.font_path;
+        let font = rusttype::Font::try_from_bytes(font_data).expect("Error loading font");
+        let scale = rusttype::Scale::uniform(position.scale); // font size
+        let text = initial_text;
+
+        let (text_width, text_height) = calculate_button_text_dimensions(&font, text, scale);
+
+        let v_metrics = font.v_metrics(scale);
+        let ascent = v_metrics.ascent;
+        let descent = v_metrics.descent;
+
+        let rect_y = position.y - ascent;
+        let rect_height = text_height + descent.abs();
+
+        let is_within_button = mouse_x >= position.x
+            && mouse_x <= position.x + text_width
+            && mouse_y >= rect_y
+            && mouse_y <= rect_y + rect_height;
+
+        if left_down && is_within_button {
+            button_pressed = true;
+        }
+
+        let highlight_color = 0xFF0000; // TODO custom box color and outline or solid boolean
+        draw_rectangle(
+            &mut app.buffer,
+            app.width,
+            app.height,
+            position.x,
+            rect_y,
+            text_width,
+            rect_height,
+            highlight_color,
+        );
+
+        // rasterize and draw text
+        let start_point = rusttype::point(position.x, position.y);
+        let glyphs: Vec<_> = font.layout(text, scale, start_point).collect();
+        for glyph in glyphs {
+            if let Some(bounding_box) = glyph.pixel_bounding_box() {
+                glyph.draw(|x, y, v| {
+                    let px = (bounding_box.min.x + x as i32) as usize;
+                    let py = (bounding_box.min.y + y as i32) as usize;
+
+                    if px < app.width && py < app.height {
+                        let color = (v * 255.0) as u32; // TODO custom color
+                        app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
+                    }
+                });
+            }
+        }
+
+        if button_pressed {
+            app.selected_text_edit_id = app.current_text_edit_id;
+        }
+    } else {
+        app.window.set_cursor_style(CursorStyle::Ibeam);
+        // TODO write text with input
     }
 }

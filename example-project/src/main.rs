@@ -27,7 +27,7 @@ fn main() {
             );
         });
 
-        //editable_single_line(&mut app, position!(200.0, 50.0, 10.0), " ");
+        editable_single_line(&mut app, position!(100.0, 50.0, 50.0), "sfsds");
     });
 
     println!("app closed after window code.");
