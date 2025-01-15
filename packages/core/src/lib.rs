@@ -14,7 +14,7 @@ pub struct App {
     pub next_button_text: String,
     pub current_text_edit_id: usize,
     pub selected_text_edit_id: usize,
-    pub input_text_storing: Vec<String>,
+    pub input_text_storing: Vec<String>, // each index correlates to selected_text_edit_id assigned via calling sequence
 }
 
 impl App {
@@ -430,6 +430,8 @@ use minifb::{CursorStyle, KeyRepeat};
 pub fn editable_single_line(app: &mut App, position: Position, initial_text: &str) {
     app.current_text_edit_id += 1;
 
+    let mut letter_input_checked: bool = false;
+
     let mut button_pressed = false;
 
     let none_selected = app.selected_text_edit_id == 0;
@@ -503,9 +505,19 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
     } else {
         app.window.set_cursor_style(CursorStyle::Ibeam);
 
+        let mut string_set_id_index: String = String::new();
         let key_mappings = key_to_string_hash_map();
         for key in app.window.get_keys_pressed(KeyRepeat::No).iter() {
-            println!("{:?}", key_mappings.get(key)); //TODO handle store
+            //println!("{:?}", key_mappings.get(key)); //TODO handle store
+            let new_string: String = format!("{}", key_mappings.get(key).unwrap());
+            string_set_id_index.push_str(&new_string);
+            letter_input_checked = true;
+            //TODO match with hash map of  coma to , or make another
+        }
+
+        if letter_input_checked {
+            println!("{string_set_id_index}");
+            letter_input_checked = false;
         }
     }
 }
