@@ -17,15 +17,12 @@ laststraw-core-macro = { path = "packages/core-macro" }
 laststraw-core = { path = "packages/core" }
 laststraw-core-macro = { path = "packages/core-macro" }
 
-# External
-glfw = "0.59.0"
-
 [profile.dev]
 opt-level = 1
 
 [profile.release]
 opt-level = 3
-rustflags = ["-C", "link-arg=-Wl,-subsystem,windows"]
+#rustflags = ["-C", "target-cpu=native"]
 
 [workspace.package]
 version = "0.0.1"
@@ -38,14 +35,3 @@ name = "laststraw"
 version = "0.1.0"
 edition = "2021"
 authors = ["Hadrian Lazic"]
-
-[target.'cfg(windows)']
-rustflags = ["-C", "link-args=-Wl,/SUBSYSTEM:WINDOWS"]
-
-[target.'cfg(target_os = "macos")']
-rustflags = ["-C", "link-args=-Wl,-application"]
-
-required-features = []
-
-[package.metadata.macos-bundle]
-hide-terminal = true

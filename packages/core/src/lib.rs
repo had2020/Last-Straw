@@ -114,6 +114,7 @@ pub fn hex_color(name: &str) -> u32 {
 }
 
 pub fn set_window_color(app: &mut App, color: &str) {
+    //TODO non hex code based system
     let new_color = hex_color(color);
 
     for pixel in app.buffer.iter_mut() {
