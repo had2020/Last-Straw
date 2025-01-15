@@ -124,6 +124,10 @@ pub fn set_window_color(app: &mut App, color: &str) {
     }
 }
 
+pub fn input_match(key_name: &str) -> Key {
+    Key::Escape
+}
+
 // https://docs.rs/minifb/latest/minifb/struct.Window.html#method.get_keys
 pub fn input_pressed(app: &App, key: &str) -> bool {
     let minifb_key = match key {
@@ -417,7 +421,7 @@ pub fn dev_mode() -> bool {
     }
 }
 
-use minifb::CursorStyle;
+use minifb::{CursorStyle, KeyRepeat};
 
 // TODO highlight or no highlight, also handling text overflow
 pub fn editable_single_line(app: &mut App, position: Position, initial_text: &str) {
@@ -495,6 +499,14 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
         }
     } else {
         app.window.set_cursor_style(CursorStyle::Ibeam);
-        // TODO write text with input
+
+        app.window
+            .get_keys_pressed(KeyRepeat::No)
+            .iter()
+            .for_each(|key| match key {
+                Key::W => println!("pressed w"),
+                Key::T => println!("pressed t"),
+                _ => (),
+            });
     }
 }
