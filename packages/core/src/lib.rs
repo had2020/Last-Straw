@@ -526,16 +526,21 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
         for key in app.window.get_keys_pressed(KeyRepeat::No).iter() {
             //println!("{:?}", key_mappings.get(key)); //TODO handle store
             let new_string: String = format!("{}", key_mappings.get(key).unwrap());
-            string_set_id_index.push_str(&new_string);
             letter_input_checked = true;
             //TODO match with hash map of  coma to , or make another
+            let string_change = match new_string.as_str() {
+                "space" => " ",
+                _ => new_string.as_str(),
+            };
+
+            string_set_id_index.push_str(string_change);
         }
 
         if letter_input_checked {
             println!("{string_set_id_index}");
             let last_stored_text = &app.input_text_storing[app.selected_text_edit_id];
             app.input_text_storing[app.selected_text_edit_id] =
-                string_set_id_index + last_stored_text;
+                format!("{}{}", last_stored_text, string_set_id_index);
             letter_input_checked = false;
         }
     }
