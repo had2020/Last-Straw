@@ -258,7 +258,7 @@ where
 }
 
 /*
-//TODO window Scrolling
+//TODO window Scrolling LATER
 pub fn handle_mouse_scroll_event_asx(scroll: f64) {
     let scroll_str = scroll.to_string();
 
@@ -534,11 +534,12 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
                 _ => new_string.as_str(),
             };
 
-            string_set_id_index.push_str(string_change);
+            if string_change.len() == 1 {
+                string_set_id_index.push_str(string_change);
+            }
         }
 
         if letter_input_checked {
-            println!("{string_set_id_index}");
             let last_stored_text = &app.input_text_storing[app.selected_text_edit_id];
             app.input_text_storing[app.selected_text_edit_id] =
                 format!("{}{}", last_stored_text, string_set_id_index);
