@@ -5,13 +5,22 @@ use minifb::{Key, Window, WindowOptions};
 pub struct App {
     pub window: Window,
     pub buffer: Vec<u32>,
+
     pub should_close: bool,
     pub input_change: bool,
+
+    // window dim
     pub height: usize,
     pub width: usize,
+
+    // font path, TODO more fonts
     pub font_path: &'static [u8],
+
+    // button
     pub next_button_position: Position,
     pub next_button_text: String,
+
+    // text input
     pub current_text_edit_id: usize,
     pub selected_text_edit_id: usize,
     pub input_text_storing: Vec<String>, // each index correlates to selected_text_edit_id assigned via calling sequence
@@ -36,7 +45,7 @@ impl App {
             next_button_text: String::from(""),
             current_text_edit_id: 0,
             selected_text_edit_id: 0,
-            input_text_storing: Vec::new(),
+            input_text_storing: vec![String::new(), String::new()],
         }
     }
 }
@@ -427,7 +436,7 @@ pub fn dev_mode() -> bool {
 use minifb::{CursorStyle, KeyRepeat};
 
 // TODO highlight or no highlight, also handling text overflow
-pub fn editable_single_line(app: &mut App, position: Position, initial_text: &str) {
+pub fn editable_single_line(app: &mut App, position: Position, initial_text: &str) -> String {
     app.current_text_edit_id += 1;
 
     let mut letter_input_checked: bool = false;
@@ -437,6 +446,12 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
     let none_selected = app.selected_text_edit_id == 0;
     let selected = app.selected_text_edit_id == app.current_text_edit_id && !none_selected;
     let non_empty_position = position.x != 0.0 && position.y != 0.0 && position.scale != 0.0;
+
+    // make non empty index for text storing in app
+    if app.input_text_storing.len() < app.selected_text_edit_id {
+        app.input_text_storing
+            .insert(app.selected_text_edit_id, String::new());
+    }
 
     if non_empty_position && !selected {
         let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
@@ -507,6 +522,7 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
 
         let mut string_set_id_index: String = String::new();
         let key_mappings = key_to_string_hash_map();
+
         for key in app.window.get_keys_pressed(KeyRepeat::No).iter() {
             //println!("{:?}", key_mappings.get(key)); //TODO handle store
             let new_string: String = format!("{}", key_mappings.get(key).unwrap());
@@ -517,7 +533,17 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
 
         if letter_input_checked {
             println!("{string_set_id_index}");
+            let last_stored_text = &app.input_text_storing[app.selected_text_edit_id];
+            app.input_text_storing[app.selected_text_edit_id] =
+                string_set_id_index + last_stored_text;
             letter_input_checked = false;
         }
+    }
+
+    if selected {
+        let full_current_text: &String = &app.input_text_storing[app.selected_text_edit_id];
+        full_current_text.clone()
+    } else {
+        String::new()
     }
 }

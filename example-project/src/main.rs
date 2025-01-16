@@ -27,7 +27,8 @@ fn main() {
             );
         });
 
-        editable_single_line(&mut app, position!(100.0, 50.0, 50.0), "sfsds");
+        let texty = editable_single_line(&mut app, position!(100.0, 50.0, 50.0), "sfsds");
+        println!("{texty}");
     });
 
     println!("app closed after window code.");
