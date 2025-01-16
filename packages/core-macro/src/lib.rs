@@ -23,8 +23,10 @@ pub fn asx(input: TokenStream) -> TokenStream {
 
                 while app.window.is_open() && !app.should_close {
 
+                    // for proper layering of text edit calls
                     app.current_text_edit_id = 0;
 
+                    // resizing
                     let current_window_size = app.window.get_size(); //TODO better resize
                     if current_window_size != last_window_size {
                         let (new_width, new_height) = current_window_size;
@@ -34,6 +36,13 @@ pub fn asx(input: TokenStream) -> TokenStream {
                         last_window_size = current_window_size;
                     }
 
+                    let left_down:bool = app.window.get_mouse_down(minifb::MouseButton::Left);
+                    if left_down {
+                        app.selected_text_edit_id = 0;
+                        app.window.set_cursor_style(minifb::CursorStyle::Arrow);
+                    }
+
+                    // Before user process /\
                     #block
                     // TODO add optional pause if no input event
 
