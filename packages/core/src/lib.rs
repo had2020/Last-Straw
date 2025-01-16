@@ -518,18 +518,17 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
             app.selected_text_edit_id = app.current_text_edit_id;
         }
     } else {
+        // selected
         app.window.set_cursor_style(CursorStyle::Ibeam);
 
         let mut string_set_id_index: String = String::new();
         let key_mappings = key_to_string_hash_map();
 
         for key in app.window.get_keys_pressed(KeyRepeat::No).iter() {
-            //println!("{:?}", key_mappings.get(key)); //TODO handle store
             let new_string: String = format!("{}", key_mappings.get(key).unwrap());
             letter_input_checked = true;
-            //TODO match with hash map of  coma to , or make another
             let string_change = match new_string.as_str() {
-                "space" => " ",
+                "space" => " ", //TODO more
                 _ => new_string.as_str(),
             };
 
@@ -546,9 +545,10 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
     }
 
     if selected {
-        let full_current_text: &String = &app.input_text_storing[app.selected_text_edit_id];
-        full_current_text.clone()
+        let full_current_text: String = (app.input_text_storing[app.selected_text_edit_id]).clone();
+        single_line_text(app, position, &full_current_text);
+        full_current_text
     } else {
-        String::new()
+        String::new() // empty if no input TODO replace with optional in a new macro
     }
 }
