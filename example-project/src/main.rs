@@ -28,7 +28,7 @@ fn main() {
         });
 
         let texty = editable_single_line(&mut app, position!(100.0, 50.0, 50.0), "sfsds");
-        single_line_text(&mut app, position!(20.0, 20.0, 40.0), &texty);
+        single_line_text(&mut app, position!(20.0, 20.0, 40.0), &texty); // you can acess the value later, will be empty, never recived input
     });
 
     println!("app closed after window code.");
