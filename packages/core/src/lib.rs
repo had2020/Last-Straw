@@ -192,16 +192,16 @@ pub fn string_to_key_hash_map<'a>() -> HashMap<&'a str, Key> {
         ("right_ctrl", Key::RightCtrl),
         ("left_alt", Key::LeftAlt),
         ("right_alt", Key::RightAlt),
-        ("semicolon", Key::Semicolon),
-        ("apostrophe", Key::Apostrophe),
-        ("comma", Key::Comma),
-        ("period", Key::Period),
-        ("slash", Key::Slash),
+        (";", Key::Semicolon),
+        ("'", Key::Apostrophe),
+        (",", Key::Comma),
+        (".", Key::Period),
+        ("/", Key::Slash),
         ("backslash", Key::Backslash),
         ("left_bracket", Key::LeftBracket),
         ("right_bracket", Key::RightBracket),
-        ("minus", Key::Minus),
-        ("equals", Key::Equal),
+        ("-", Key::Minus),
+        ("+", Key::Equal),
         ("caps_lock", Key::CapsLock),
         ("scroll_lock", Key::ScrollLock),
         ("num_lock", Key::NumLock),
@@ -590,6 +590,9 @@ pub fn editable_single_line(
                 string_set_id_index.push_str(string_change);
             } else {
                 if string_change == "backspace" {
+                    backspace = true
+                }
+                if string_change == "delete" {
                     backspace = true
                 }
                 //println!("{}", string_change); // debugging missing keys
