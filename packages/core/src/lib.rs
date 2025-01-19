@@ -534,6 +534,7 @@ pub fn editable_single_line(
 
         // rasterize and draw text
         let start_point = rusttype::point(position.x, position.y);
+
         let glyphs: Vec<_> = font.layout(text, scale, start_point).collect();
         for glyph in glyphs {
             if let Some(bounding_box) = glyph.pixel_bounding_box() {
