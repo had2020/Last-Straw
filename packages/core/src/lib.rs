@@ -555,15 +555,20 @@ pub fn editable_single_line(
     } else {
         // selected
         app.window.set_cursor_style(CursorStyle::Ibeam);
-        // blinker
+
+        // blinker TODO move with letters
         if app.on_blinker == true {
             app.on_blinker = false;
             draw_box(
                 app,
-                position.clone(),
-                1 * position.scale as usize,
-                100,
-                "Black",
+                Position {
+                    x: position.clone().x - (1.0 * position.scale / 10.0),
+                    y: position.clone().y - (5.0 * position.scale / 10.0),
+                    scale: 0.0,
+                },
+                1 * position.scale as usize / 10,
+                5 * position.scale as usize / 10,
+                "White",
             );
         } else {
             app.on_blinker = true;
@@ -616,7 +621,10 @@ pub fn editable_single_line(
 }
 
 pub fn limit_fps(app: &mut App, fps: f32) {
-    app.window
-        .limit_update_rate(Some(std::time::Duration::from_secs_f32(1.0 / fps)));
-    // 144 FPS
+    if fps > 1.0 {
+        app.window
+            .limit_update_rate(Some(std::time::Duration::from_secs_f32(1.0 / fps)));
+    } else {
+        eprintln!("limit_fps(), fps to low.")
+    }
 }
