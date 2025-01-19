@@ -24,6 +24,7 @@ pub struct App {
     pub current_text_edit_id: usize,
     pub selected_text_edit_id: usize,
     pub input_text_storing: Vec<String>, // each index correlates to selected_text_edit_id assigned via calling sequence
+    pub on_blinker: bool,                // cycles on and off, on text element
 }
 
 impl App {
@@ -46,6 +47,7 @@ impl App {
             current_text_edit_id: 0,
             selected_text_edit_id: 0,
             input_text_storing: vec![String::new(), String::new()],
+            on_blinker: true,
         }
     }
 }
@@ -433,11 +435,35 @@ pub fn dev_mode() -> bool {
     }
 }
 
+pub fn draw_box(
+    app: &mut App,
+    position: Position,
+    box_width: usize,
+    box_height: usize,
+    color: &str,
+) {
+    let box_x: usize = position.x as usize;
+    let box_y: usize = position.y as usize;
+    for y in box_y..box_y + box_height {
+        for x in box_x..box_x + box_width {
+            if x < app.width && y < app.height {
+                //bounds check
+                app.buffer[y * app.width + x] = hex_color(color);
+            }
+        }
+    }
+}
+
 use minifb::{CursorStyle, KeyRepeat};
 
 //TODO password protected function
 // TODO highlight or no highlight, also handling text overflow
-pub fn editable_single_line(app: &mut App, position: Position, initial_text: &str) -> String {
+pub fn editable_single_line(
+    app: &mut App,
+    position: Position,
+    initial_text: &str,
+    color: &str,
+) -> String {
     app.current_text_edit_id += 1;
 
     let mut letter_input_checked: bool = false;
@@ -463,10 +489,18 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
             .unwrap_or((0.0, 0.0));
         let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
 
+        let mut text: &str;
+        let text_value = app.input_text_storing[app.current_text_edit_id].clone();
+
+        if (app.input_text_storing[app.current_text_edit_id]).len() > 0 {
+            text = &text_value;
+        } else {
+            text = initial_text;
+        }
+
         let font_data = &app.font_path;
         let font = rusttype::Font::try_from_bytes(font_data).expect("Error loading font");
         let scale = rusttype::Scale::uniform(position.scale); // font size
-        let text = initial_text;
 
         let (text_width, text_height) = calculate_button_text_dimensions(&font, text, scale);
 
@@ -486,7 +520,7 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
             button_pressed = true;
         }
 
-        let highlight_color = 0xFF0000; // TODO custom box color and outline or solid boolean
+        let highlight_color = hex_color(color); // TODO custom box color and outline or solid boolean
         draw_rectangle(
             &mut app.buffer,
             app.width,
@@ -521,7 +555,19 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
     } else {
         // selected
         app.window.set_cursor_style(CursorStyle::Ibeam);
-        // TODO blinker on element
+        // blinker
+        if app.on_blinker == true {
+            app.on_blinker = false;
+            draw_box(
+                app,
+                position.clone(),
+                1 * position.scale as usize,
+                100,
+                "Black",
+            );
+        } else {
+            app.on_blinker = true;
+        }
 
         let mut string_set_id_index: String = String::new();
         let key_mappings = key_to_string_hash_map();
