@@ -525,24 +525,37 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
 
         let mut string_set_id_index: String = String::new();
         let key_mappings = key_to_string_hash_map();
+        let mut backspace = false;
 
-        for key in app.window.get_keys_pressed(KeyRepeat::No).iter() {
+        for key in app.window.get_keys_pressed(KeyRepeat::Yes).iter() {
             let new_string: String = format!("{}", key_mappings.get(key).unwrap());
             letter_input_checked = true;
             let string_change = match new_string.as_str() {
-                "space" => " ", //TODO more
+                "space" => " ", // TODO expand system for caps and shift caps.
                 _ => new_string.as_str(),
             };
 
             if string_change.len() == 1 {
                 string_set_id_index.push_str(string_change);
+            } else {
+                if string_change == "backspace" {
+                    backspace = true
+                }
+                //println!("{}", string_change); // debugging missing keys
             }
         }
 
-        if letter_input_checked {
+        if letter_input_checked && !backspace {
             let last_stored_text = &app.input_text_storing[app.selected_text_edit_id];
             app.input_text_storing[app.selected_text_edit_id] =
                 format!("{}{}", last_stored_text, string_set_id_index);
+            letter_input_checked = false;
+        } else if letter_input_checked && backspace {
+            let mut full_current_text: String =
+                (app.input_text_storing[app.selected_text_edit_id]).clone();
+            full_current_text.pop();
+            app.input_text_storing[app.selected_text_edit_id] = full_current_text;
+            backspace = false;
             letter_input_checked = false;
         }
     }
@@ -554,4 +567,10 @@ pub fn editable_single_line(app: &mut App, position: Position, initial_text: &st
     } else {
         String::new() // empty if no input TODO replace with optional in a new macro
     }
+}
+
+pub fn limit_fps(app: &mut App, fps: f32) {
+    app.window
+        .limit_update_rate(Some(std::time::Duration::from_secs_f32(1.0 / fps)));
+    // 144 FPS
 }
