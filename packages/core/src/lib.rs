@@ -23,8 +23,9 @@ pub struct App {
     // text input
     pub current_text_edit_id: usize,
     pub selected_text_edit_id: usize,
-    pub input_text_storing: Vec<String>, // each index correlates to selected_text_edit_id assigned via calling sequence
-    pub on_blinker: bool,                // cycles on and off, on text element
+    //pub input_text_storing: Vec<String>, // each index correlates to selected_text_edit_id assigned via calling sequence
+    pub on_blinker: bool, // cycles on and off, on text element
+    pub multi_line_storing: Vec<Vec<String>>, // each index matchs id, nut for each index of index, stands for a line of text
 }
 
 impl App {
@@ -46,8 +47,9 @@ impl App {
             next_button_text: String::from(""),
             current_text_edit_id: 0,
             selected_text_edit_id: 0,
-            input_text_storing: vec![String::new(), String::new()],
+            //input_text_storing: vec![String::new(), String::new()],
             on_blinker: true,
+            multi_line_storing: vec![vec![String::new(), String::new()]],
         }
     }
 }
@@ -467,17 +469,19 @@ pub fn editable_single_line(
     app.current_text_edit_id += 1;
 
     let mut letter_input_checked: bool = false;
-
     let mut button_pressed = false;
+    let current_line_number: usize = app.multi_line_storing.len();
 
     let none_selected = app.selected_text_edit_id == 0;
     let selected = app.selected_text_edit_id == app.current_text_edit_id && !none_selected;
     let non_empty_position = position.x != 0.0 && position.y != 0.0 && position.scale != 0.0;
 
     // make non empty index for text storing in app
-    if app.input_text_storing.len() < app.selected_text_edit_id {
-        app.input_text_storing
-            .insert(app.selected_text_edit_id, String::new());
+    if app.multi_line_storing[app.selected_text_edit_id[current_line_number]].len()
+        < app.selected_text_edit_id
+    {
+        app.multi_line_storing[app.selected_text_edit_id[current_line_number]]
+            .insert(app.selected_text_edit_id, vec![String::new()]);
     }
 
     if non_empty_position && !selected {
@@ -490,7 +494,7 @@ pub fn editable_single_line(
         let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
 
         let mut text: &str;
-        let text_value = app.input_text_storing[app.current_text_edit_id].clone();
+        let text_value = app.multi_line_storing[app.current_text_edit_id].clone();
 
         if (app.input_text_storing[app.current_text_edit_id]).len() > 0 {
             text = &text_value;
@@ -578,6 +582,7 @@ pub fn editable_single_line(
         let mut string_set_id_index: String = String::new();
         let key_mappings = key_to_string_hash_map();
         let mut backspace = false;
+        let mut new_line = false;
 
         for key in app.window.get_keys_pressed(KeyRepeat::Yes).iter() {
             let new_string: String = format!("{}", key_mappings.get(key).unwrap());
@@ -596,6 +601,9 @@ pub fn editable_single_line(
                 if string_change == "delete" {
                     backspace = true
                 }
+                if string_change == "enter" {
+                    new_line = true
+                }
                 //println!("{}", string_change); // debugging missing keys
             }
         }
@@ -611,6 +619,13 @@ pub fn editable_single_line(
             full_current_text.pop();
             app.input_text_storing[app.selected_text_edit_id] = full_current_text;
             backspace = false;
+            letter_input_checked = false;
+        }
+
+        if letter_input_checked && new_line {
+            let last_stored_text = &app.input_text_storing[app.selected_text_edit_id];
+            app.input_text_storing[app.selected_text_edit_id] =
+                format!("{}{}", last_stored_text, string_set_id_index);
             letter_input_checked = false;
         }
     }
