@@ -48,7 +48,10 @@ impl App {
             current_text_edit_id: 0,
             selected_text_edit_id: 0,
             //input_text_storing: vec![String::new(), String::new()],
-            multi_line_storing: vec![vec![String::new(), String::new()]],
+            multi_line_storing: vec![
+                vec![String::new(), String::new()],
+                vec![String::new(), String::new()],
+            ],
             on_blinker: true,
         }
     }
@@ -139,7 +142,7 @@ pub fn set_window_color(app: &mut App, color: &str) {
     }
 }
 
-use std::collections::HashMap;
+use std::{collections::HashMap, f64::RADIX};
 
 pub fn string_to_key_hash_map<'a>() -> HashMap<&'a str, Key> {
     let key_mappings: HashMap<&str, Key> = [
@@ -477,13 +480,17 @@ pub fn editable_single_line(
     let selected = app.selected_text_edit_id == app.current_text_edit_id && !none_selected;
     let non_empty_position = position.x != 0.0 && position.y != 0.0 && position.scale != 0.0;
 
-    let last_line = app.multi_line_storing.len() - 1;
-    let mut line_text = app.multi_line_storing[last_line].clone();
+    let last_line = app.multi_line_storing[app.selected_text_edit_id].len() - 1;
+    //println!("{},", last_line); // Debugging
+
+    let mut line_text = app.multi_line_storing[app.selected_text_edit_id][last_line].clone();
 
     // make non empty index for text storing in app
-    if line_text.len() < app.selected_text_edit_id {
-        line_text.insert(app.selected_text_edit_id, String::new());
+    if line_text.len() < last_line {
+        line_text.insert(last_line, String::new());
     }
+
+    println!("PREmls: {:?}", app.multi_line_storing); //[last_line]);
 
     if non_empty_position && !selected {
         let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
@@ -509,9 +516,8 @@ pub fn editable_single_line(
             scale: position.scale,
         };
 
-        println!("app.multi_line_storing: {:?}", app.multi_line_storing); // for Debuging changes
-                                                                          //println!("last_line: {}", last_line);
-        for line in 0..last_line + 1 {
+        //println!("app.multi_line_storing: {:?}", app.multi_line_storing); // for Debuging changes
+        for line in 0..last_line {
             let font_data = &app.font_path;
             let font = rusttype::Font::try_from_bytes(font_data).expect("Error loading font");
             let scale = rusttype::Scale::uniform(position_iterator.scale); // font size
@@ -627,6 +633,7 @@ pub fn editable_single_line(
             line_text[app.selected_text_edit_id] =
                 format!("{}{}", last_stored_text, string_set_id_index);
             letter_input_checked = false;
+            //
         } else if letter_input_checked && backspace {
             let mut full_current_text: String = (line_text[app.selected_text_edit_id]).clone();
             full_current_text.pop();
@@ -637,7 +644,7 @@ pub fn editable_single_line(
 
         // enter, new index line
         if enter {
-            app.multi_line_storing[last_line].push(String::new());
+            app.multi_line_storing[app.selected_text_edit_id].push(String::new());
         }
     }
 
@@ -646,10 +653,12 @@ pub fn editable_single_line(
         single_line_text(app, position, &full_current_text);
 
         // updating app's memory of the text
-        //println!("line_text: {:?}", line_text); // for Debuging changes
         if !enter {
-            app.multi_line_storing[last_line] = line_text;
+            //println!("lt: {:?}", line_text); // Debugging
+            app.multi_line_storing[app.selected_text_edit_id] = line_text;
+            //println!("mls: {:?}", app.multi_line_storing[last_line]);
         }
+
         full_current_text
     } else {
         String::new() // empty if no input TODO replace with optional in a new macro
