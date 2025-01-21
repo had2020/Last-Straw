@@ -485,10 +485,12 @@ pub fn editable_single_line(
 
     let mut line_text = app.multi_line_storing[app.selected_text_edit_id][last_line].clone();
 
+    /*
     // make non empty index for text storing in app
     if line_text.len() < last_line {
         line_text.insert(last_line, String::new());
     }
+    */
 
     println!("PREmls: {:?}", app.multi_line_storing); //[last_line]);
 
@@ -502,9 +504,9 @@ pub fn editable_single_line(
         let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
 
         let mut text: &str;
-        let text_value = line_text[app.current_text_edit_id].clone();
+        let text_value = line_text.clone();
 
-        if (line_text[app.current_text_edit_id]).len() > 0 {
+        if line_text.len() > 0 {
             text = &text_value;
         } else {
             text = initial_text;
@@ -629,15 +631,14 @@ pub fn editable_single_line(
 
         // backspace, char deletion
         if letter_input_checked && !backspace {
-            let last_stored_text = &line_text[app.selected_text_edit_id];
-            line_text[app.selected_text_edit_id] =
-                format!("{}{}", last_stored_text, string_set_id_index);
+            let last_stored_text = &line_text;
+            line_text = format!("{}{}", last_stored_text, string_set_id_index);
             letter_input_checked = false;
             //
         } else if letter_input_checked && backspace {
-            let mut full_current_text: String = (line_text[app.selected_text_edit_id]).clone();
+            let mut full_current_text: String = line_text.clone();
             full_current_text.pop();
-            line_text[app.selected_text_edit_id] = full_current_text;
+            line_text = full_current_text;
             backspace = false;
             letter_input_checked = false;
         }
@@ -649,13 +650,13 @@ pub fn editable_single_line(
     }
 
     if selected {
-        let full_current_text: String = (line_text[app.selected_text_edit_id]).clone();
+        let full_current_text: String = line_text.clone();
         single_line_text(app, position, &full_current_text);
 
         // updating app's memory of the text
         if !enter {
             //println!("lt: {:?}", line_text); // Debugging
-            app.multi_line_storing[app.selected_text_edit_id] = line_text;
+            app.multi_line_storing[app.selected_text_edit_id][last_line] = line_text;
             //println!("mls: {:?}", app.multi_line_storing[last_line]);
         }
 
