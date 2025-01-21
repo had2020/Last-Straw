@@ -476,6 +476,7 @@ pub fn draw_box(
 
 use minifb::{CursorStyle, KeyRepeat};
 
+//TODO caps
 //TODO password protected function
 // TODO highlight or no highlight, also handling text overflow
 pub fn editable_lines(
@@ -483,6 +484,7 @@ pub fn editable_lines(
     position: Position,
     initial_text: &str,
     color: &str,
+    single_line: bool,
 ) -> String {
     app.current_text_edit_id += 1;
 
@@ -647,7 +649,7 @@ pub fn editable_lines(
         } else if letter_input_checked && backspace {
             let mut full_current_text: String = line_text.clone();
             if full_current_text.len() < 1
-                && app.multi_line_storing[app.selected_text_edit_id].len() > 1
+                && app.multi_line_storing[app.selected_text_edit_id].len() > 2
             {
                 app.multi_line_storing[app.selected_text_edit_id].pop();
                 line_removed = true;
@@ -659,7 +661,7 @@ pub fn editable_lines(
         }
 
         // enter, new index line
-        if enter {
+        if enter && !single_line {
             app.multi_line_storing[app.selected_text_edit_id].push(String::new());
         }
     }
