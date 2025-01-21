@@ -350,6 +350,21 @@ pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Ve
     }
 }
 
+pub fn multi_line_text_owned(app: &mut App, position: Position, spacing: f32, text: Vec<String>) {
+    let font_data = FONT_BYTES;
+    let font = Font::try_from_bytes(font_data).expect("Error loading font");
+
+    let scale = Scale::uniform(position.scale);
+    let mut iteration_position: rusttype::Point<f32>;
+
+    iteration_position = point(position.x, position.y);
+
+    for line in text.iter() {
+        iteration_position = point(iteration_position.x, iteration_position.y + spacing);
+        rasterize_text(&font, line, scale, iteration_position, app);
+    }
+}
+
 pub fn draw_rectangle(
     buffer: &mut Vec<u32>,
     width: usize,
@@ -463,7 +478,7 @@ use minifb::{CursorStyle, KeyRepeat};
 
 //TODO password protected function
 // TODO highlight or no highlight, also handling text overflow
-pub fn editable_single_line(
+pub fn editable_lines(
     app: &mut App,
     position: Position,
     initial_text: &str,
@@ -475,6 +490,7 @@ pub fn editable_single_line(
 
     let mut button_pressed = false;
     let mut enter = false; // set to true, if enter key pressed
+    let mut line_removed = false; // tracks when a line is removed, for no index errors
 
     let none_selected = app.selected_text_edit_id == 0;
     let selected = app.selected_text_edit_id == app.current_text_edit_id && !none_selected;
@@ -485,14 +501,7 @@ pub fn editable_single_line(
 
     let mut line_text = app.multi_line_storing[app.selected_text_edit_id][last_line].clone();
 
-    /*
-    // make non empty index for text storing in app
-    if line_text.len() < last_line {
-        line_text.insert(last_line, String::new());
-    }
-    */
-
-    println!("PREmls: {:?}", app.multi_line_storing); //[last_line]);
+    //println!("PREmls: {:?}", app.multi_line_storing); //[last_line]);
 
     if non_empty_position && !selected {
         let left_down = app.window.get_mouse_down(minifb::MouseButton::Left);
@@ -573,7 +582,7 @@ pub fn editable_single_line(
                 }
             }
 
-            position_iterator.y += 20.0; //* (position_iterator.scale / 10.0); TODO!
+            position_iterator.y += 50.0; //* (position_iterator.scale / 10.0); TODO!
         }
 
         if button_pressed {
@@ -637,6 +646,12 @@ pub fn editable_single_line(
             //
         } else if letter_input_checked && backspace {
             let mut full_current_text: String = line_text.clone();
+            if full_current_text.len() < 1
+                && app.multi_line_storing[app.selected_text_edit_id].len() > 1
+            {
+                app.multi_line_storing[app.selected_text_edit_id].pop();
+                line_removed = true;
+            }
             full_current_text.pop();
             line_text = full_current_text;
             backspace = false;
@@ -651,13 +666,25 @@ pub fn editable_single_line(
 
     if selected {
         let full_current_text: String = line_text.clone();
-        single_line_text(app, position, &full_current_text);
+        //single_line_text(app, position, &full_current_text);
+        multi_line_text_owned(
+            app,
+            Position {
+                x: position.x,
+                y: position.y - 100.0,
+                scale: position.scale,
+            },
+            50.0,
+            app.multi_line_storing[app.selected_text_edit_id].clone(),
+        );
 
         // updating app's memory of the text
-        if !enter {
+        if !enter && !line_removed {
             //println!("lt: {:?}", line_text); // Debugging
             app.multi_line_storing[app.selected_text_edit_id][last_line] = line_text;
             //println!("mls: {:?}", app.multi_line_storing[last_line]);
+        } else if !enter && line_removed {
+            app.multi_line_storing[app.selected_text_edit_id][last_line - 1] = line_text;
         }
 
         full_current_text
