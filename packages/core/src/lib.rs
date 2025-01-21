@@ -23,8 +23,9 @@ pub struct App {
     // text input
     pub current_text_edit_id: usize,
     pub selected_text_edit_id: usize,
-    pub input_text_storing: Vec<String>, // each index correlates to selected_text_edit_id assigned via calling sequence
-    pub on_blinker: bool,                // cycles on and off, on text element
+    //pub input_text_storing: Vec<String>, // each index correlates to selected_text_edit_id assigned via calling sequence
+    pub on_blinker: bool, // cycles on and off, on text element
+    pub multi_line_storing: Vec<Vec<String>>, // each index matchs id, nut for each index of index, stands for a line of text
 }
 
 impl App {
@@ -46,7 +47,8 @@ impl App {
             next_button_text: String::from(""),
             current_text_edit_id: 0,
             selected_text_edit_id: 0,
-            input_text_storing: vec![String::new(), String::new()],
+            //input_text_storing: vec![String::new(), String::new()],
+            multi_line_storing: vec![vec![String::new(), String::new()]],
             on_blinker: true,
         }
     }
@@ -328,7 +330,7 @@ pub fn rasterize_text(
     }
 }
 
-// TODO custom color
+// TODO custom color, TODO move blinker with arrow keys, and highlighting
 pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Vec<&str>) {
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
@@ -469,15 +471,18 @@ pub fn editable_single_line(
     let mut letter_input_checked: bool = false;
 
     let mut button_pressed = false;
+    let mut enter = false; // set to true, if enter key pressed
 
     let none_selected = app.selected_text_edit_id == 0;
     let selected = app.selected_text_edit_id == app.current_text_edit_id && !none_selected;
     let non_empty_position = position.x != 0.0 && position.y != 0.0 && position.scale != 0.0;
 
+    let last_line = app.multi_line_storing.len() - 1;
+    let mut line_text = app.multi_line_storing[last_line].clone();
+
     // make non empty index for text storing in app
-    if app.input_text_storing.len() < app.selected_text_edit_id {
-        app.input_text_storing
-            .insert(app.selected_text_edit_id, String::new());
+    if line_text.len() < app.selected_text_edit_id {
+        line_text.insert(app.selected_text_edit_id, String::new());
     }
 
     if non_empty_position && !selected {
@@ -490,64 +495,77 @@ pub fn editable_single_line(
         let (mouse_x, mouse_y) = (mouse_pos.0 as f32, mouse_pos.1 as f32);
 
         let mut text: &str;
-        let text_value = app.input_text_storing[app.current_text_edit_id].clone();
+        let text_value = line_text[app.current_text_edit_id].clone();
 
-        if (app.input_text_storing[app.current_text_edit_id]).len() > 0 {
+        if (line_text[app.current_text_edit_id]).len() > 0 {
             text = &text_value;
         } else {
             text = initial_text;
         }
 
-        let font_data = &app.font_path;
-        let font = rusttype::Font::try_from_bytes(font_data).expect("Error loading font");
-        let scale = rusttype::Scale::uniform(position.scale); // font size
+        let mut position_iterator = Position {
+            x: position.x,
+            y: position.y,
+            scale: position.scale,
+        };
 
-        let (text_width, text_height) = calculate_button_text_dimensions(&font, text, scale);
+        println!("app.multi_line_storing: {:?}", app.multi_line_storing); // for Debuging changes
+                                                                          //println!("last_line: {}", last_line);
+        for line in 0..last_line + 1 {
+            let font_data = &app.font_path;
+            let font = rusttype::Font::try_from_bytes(font_data).expect("Error loading font");
+            let scale = rusttype::Scale::uniform(position_iterator.scale); // font size
 
-        let v_metrics = font.v_metrics(scale);
-        let ascent = v_metrics.ascent;
-        let descent = v_metrics.descent;
+            let (text_width, text_height) = calculate_button_text_dimensions(&font, text, scale);
 
-        let rect_y = position.y - ascent;
-        let rect_height = text_height + descent.abs();
+            let v_metrics = font.v_metrics(scale);
+            let ascent = v_metrics.ascent;
+            let descent = v_metrics.descent;
 
-        let is_within_button = mouse_x >= position.x
-            && mouse_x <= position.x + text_width
-            && mouse_y >= rect_y
-            && mouse_y <= rect_y + rect_height;
+            let rect_y = position_iterator.y - ascent;
+            let rect_height = text_height + descent.abs();
 
-        if left_down && is_within_button {
-            button_pressed = true;
-        }
+            let is_within_button = mouse_x >= position_iterator.x
+                && mouse_x <= position_iterator.x + text_width
+                && mouse_y >= rect_y
+                && mouse_y <= rect_y + rect_height;
 
-        let highlight_color = hex_color(color); // TODO custom box color and outline or solid boolean
-        draw_rectangle(
-            &mut app.buffer,
-            app.width,
-            app.height,
-            position.x,
-            rect_y,
-            text_width,
-            rect_height,
-            highlight_color,
-        );
-
-        // rasterize and draw text
-        let start_point = rusttype::point(position.x, position.y);
-
-        let glyphs: Vec<_> = font.layout(text, scale, start_point).collect();
-        for glyph in glyphs {
-            if let Some(bounding_box) = glyph.pixel_bounding_box() {
-                glyph.draw(|x, y, v| {
-                    let px = (bounding_box.min.x + x as i32) as usize;
-                    let py = (bounding_box.min.y + y as i32) as usize;
-
-                    if px < app.width && py < app.height {
-                        let color = (v * 255.0) as u32; // TODO custom color
-                        app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
-                    }
-                });
+            if left_down && is_within_button {
+                button_pressed = true;
             }
+
+            let highlight_color = hex_color(color); // TODO custom box color and outline or solid boolean
+
+            draw_rectangle(
+                &mut app.buffer,
+                app.width,
+                app.height,
+                position.x,
+                rect_y,
+                text_width,
+                rect_height,
+                highlight_color,
+            );
+
+            // rasterize and draw text
+            let start_point = rusttype::point(position_iterator.x, position_iterator.y);
+
+            let glyphs: Vec<_> = font.layout(text, scale, start_point).collect();
+            for glyph in glyphs {
+                if let Some(bounding_box) = glyph.pixel_bounding_box() {
+                    glyph.draw(|x, y, v| {
+                        let px = (bounding_box.min.x + x as i32) as usize;
+                        let py = (bounding_box.min.y + y as i32) as usize;
+
+                        if px < app.width && py < app.height {
+                            let color = (v * 255.0) as u32; // TODO custom color
+                            app.buffer[py * app.width + px] = (color << 16) | (color << 8) | color;
+                        }
+                    });
+                }
+            }
+
+            position_iterator.y += 20.0; //* (position_iterator.scale / 10.0); TODO!
         }
 
         if button_pressed {
@@ -596,28 +614,42 @@ pub fn editable_single_line(
                 if string_change == "delete" {
                     backspace = true
                 }
+                if string_change == "enter" {
+                    enter = true
+                }
                 //println!("{}", string_change); // debugging missing keys
             }
         }
 
+        // backspace, char deletion
         if letter_input_checked && !backspace {
-            let last_stored_text = &app.input_text_storing[app.selected_text_edit_id];
-            app.input_text_storing[app.selected_text_edit_id] =
+            let last_stored_text = &line_text[app.selected_text_edit_id];
+            line_text[app.selected_text_edit_id] =
                 format!("{}{}", last_stored_text, string_set_id_index);
             letter_input_checked = false;
         } else if letter_input_checked && backspace {
-            let mut full_current_text: String =
-                (app.input_text_storing[app.selected_text_edit_id]).clone();
+            let mut full_current_text: String = (line_text[app.selected_text_edit_id]).clone();
             full_current_text.pop();
-            app.input_text_storing[app.selected_text_edit_id] = full_current_text;
+            line_text[app.selected_text_edit_id] = full_current_text;
             backspace = false;
             letter_input_checked = false;
+        }
+
+        // enter, new index line
+        if enter {
+            app.multi_line_storing[last_line].push(String::new());
         }
     }
 
     if selected {
-        let full_current_text: String = (app.input_text_storing[app.selected_text_edit_id]).clone();
+        let full_current_text: String = (line_text[app.selected_text_edit_id]).clone();
         single_line_text(app, position, &full_current_text);
+
+        // updating app's memory of the text
+        //println!("line_text: {:?}", line_text); // for Debuging changes
+        if !enter {
+            app.multi_line_storing[last_line] = line_text;
+        }
         full_current_text
     } else {
         String::new() // empty if no input TODO replace with optional in a new macro
@@ -629,6 +661,6 @@ pub fn limit_fps(app: &mut App, fps: f32) {
         app.window
             .limit_update_rate(Some(std::time::Duration::from_secs_f32(1.0 / fps)));
     } else {
-        eprintln!("limit_fps(), fps to low.")
+        eprintln!("limit_fps(), fps set too low.")
     }
 }
