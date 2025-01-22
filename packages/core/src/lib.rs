@@ -595,6 +595,7 @@ pub fn editable_lines(
         app.window.set_cursor_style(CursorStyle::Ibeam);
 
         // blinker TODO move with letters
+        /*
         if app.on_blinker == true {
             app.on_blinker = false;
             draw_box(
@@ -611,6 +612,7 @@ pub fn editable_lines(
         } else {
             app.on_blinker = true;
         }
+        */
 
         let mut string_set_id_index: String = String::new();
         let key_mappings = key_to_string_hash_map();
