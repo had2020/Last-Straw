@@ -1,11 +1,29 @@
-Laststraw
+# Laststraw
 
-Ongoing early development!
+Simple GUI framework with only Minifb and Freetype-sys
 
-cargo bundle needed to not have cmd window, if you wish for a full app
+# How to run example project
+firstly this libary depends on the developer installing freetype2 
 
-using cargo-watch to hot-reload
-cargo install cargo-watch
-cargo watch -x run
+Installing SYSTEM freetype package for rust
+- macos
+  ``` 
+  brew install freetype
+  ```
+- Linux
+  ```
+  sudo apt-get install libfreetype6-dev
+  ```
+- Windows
+  Note you will likely need to use GNUWin32 to compile!
+  Read: https://github.com/PistonDevelopers/freetype-sys?tab=readme-ov-file for more
 
-TODO doc install brew install freetype and for ubuntu and window as it requires something extra
+Running the example 
+  Cloning repo
+```
+git clone https://github.com/had2020/Last-Straw.git
+```
+Then run the example project, INSIDE the example-project folder
+```
+cargo run
+```
