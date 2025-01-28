@@ -1,5 +1,7 @@
 # Laststraw
 
+MSRV Verison: Rust 1.78.0 
+
 Simple GUI framework with only Minifb and Freetype-sys
 
 # How to run example project
@@ -34,7 +36,10 @@ The main problem for my with these frameworks, is that desktop apps, acted like
 mini web browsers. This meant I had to tailer my code to not interact with the hardware, like a website, with static files. I just needed a framework that had buttons and multiline text to enter and display. Just something to make a basic text editer. I like the features of Iced, but I wanted a more light CPU, based framework, that is cross compatible. 
 
 # How it works
-- App stuct 
-firstly, I use the App stuct to hold all of are current app window's infomation, I.e, size height, and some more that were needed from the minifb framework.
+- App stuct
+  
+firstly, I use the App stuct to hold all of are current app window's infomation, i.e, size height, and some more that were needed from the minifb framework. 
 ```
+let mut app = App::new(500, 500, "test");
 ```
+
