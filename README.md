@@ -102,9 +102,26 @@ let lines: Vec<&str> = vec!["Apple fruit", "Banana", "Cherry pie", "Oreos"]; // 
 multi_line_text(&mut app, position!(100.0, 100.0, 50.0), 50.0, lines); // lines needs index in a Vec<&str>
 ```
 
-#  Button Element
+# Interactable text
+1. First argument is the declared App stuct, from outside asx.
+2. Second is a macro declaring a position struct, Hight, Width, Scale.
+3. The text seen before any text is enter by user.
+4. Color from color table, refered to at end of docs, or laststraw_core.
+5. If the element would only accept single line, false, means single line only.
+
+``` rust
+let texty: String = editable_lines(
+    &mut app, // mut app stuct variable created by new impl on App.
+    position!(100.0, 50.0, 50.0), // position struct created by macro.
+    "enter:", // preluding text.
+    "Blue", // color of the boarder.
+    false, // if you wish for only single line input.
+);
+```
+
+#  Input checking
 1. First argument is a declared App stuct.
-2. Second is the key see input table at the buttom of the docs or laststraw_core.
+2. Second is the key see input table at the end of the docs or laststraw_core.
 3. Any code inside the if state behaves as expected, as the function returns true or false based off the if the key is pressed.
 
 ``` rust
@@ -113,7 +130,30 @@ multi_line_text(&mut app, position!(100.0, 100.0, 50.0), 50.0, lines); // lines 
   }
 ```
 
-# 
+# Changing the Window color
+TIP make sure this is the futherest back, because it writes over the whole screen buffer.
+Sets the color of the background.
+``` rust
+set_window_color(&mut app, "Obsidian"); 
+```
+
+# Limit fps to reduce CPU usage if needed
+1. First argument is the declared App stuct, from outside asx.
+2. Second argument is the max frames per a second.
+
+Note: this is optional, and used to reduce CPU usage for much heavy apps, with many elements.
+``` rust
+limit_fps(&mut app, 60.0); // a nice 60 frames per a second, 30-60 is a good number.
+```
+
+# Closing app
+- This framework uses a lot of abstraction from minifb and freetype.
+- So to simply close the app, set app.should_close to true.
+- This is becasue, asx is a avarge while loop like seen in many window frameworks like minifb: in this project, and Glfw.
+```
+  app.should_close = true; // closes app at line.
+```
+
 
 ## Why
 I took lots of inspiration from Rust Frameworks like Dioxus and Tauri Frameworks.
