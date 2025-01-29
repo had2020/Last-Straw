@@ -126,7 +126,7 @@ let texty: String = editable_lines(
 
 ``` rust
   if input_pressed(&app, "space") {
-      single_line_text(&mut app, position!(20.0, 20.0, 40.0), "You pressed space");
+      single_line_text(&mut app, position!(20.0, 20.0, 40.0), "Hello");
   }
 ```
 
@@ -152,6 +152,28 @@ limit_fps(&mut app, 60.0); // a nice 60 frames per a second, 30-60 is a good num
 - This is becasue, asx is a avarge while loop like seen in many window frameworks like minifb: in this project, and Glfw.
 ```
   app.should_close = true; // closes app at line.
+```
+
+# Structuring, Base Plate
+This is a example of a base plate for a app, in this framework.
+``` rust
+use laststraw::*;
+
+fn main() {
+    let mut app = App::new(500, 500, "test"); // app variable, must be only a single one named app, which is mutable.
+
+    asx!({ // runs every frame while, app.should_close == false.
+        single_line_text(&mut app, position!(20.0, 20.0, 40.0), "Hello"); // shows Hello on the screen
+
+        if input_pressed(&app, "esc") { // if the esc key is pressed the inside code runs.
+            app.should_close = true; // stops the asx loop to end.
+        }
+    });
+
+    println!("app closed after window code."); // last line of code, like in a normal rust program, EVEN if the user exited with exit button.
+    // FAILS only if force exit by task manager alike program.
+}
+
 ```
 
 
