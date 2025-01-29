@@ -366,9 +366,12 @@ The main problem for my with these frameworks, is that desktop apps, acted like 
 
 This meant I had to tailer my code to not interact with the hardware, like a website, with static files. I just needed a framework that had buttons and multiline text to enter and display. Just something to make a basic text editer. 
 
-I like the features of Iced, but I wanted a more light CPU, based framework, that is cross compatible. I also wanted easy to read variable names, as once someone learns them, they can just macrofi them.
+I like the features of Iced, but I wanted a more light CPU, based framework. That could also be cross compatible. I also wanted easy to read variable names, as once someone learns them, they can just macrofi them. 
 
-Hopfully, this project makes some dev happy, somewhere to keep their rust app low level.
+I also wished it to be easyer for people new to Rust to be able to make Apps.
+As I belive people like projects they can see rendered on their screen more.
+
+Hopfully, this project makes some dev happy to keep their rust app low level.
 
 ## Contributing
 Since, this is my first published crate framework, I expect their might be bugs.
