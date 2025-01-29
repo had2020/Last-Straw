@@ -1,7 +1,29 @@
-// TODO at some point write some amazing documentation for everything
+// By: Hadrian Lazic
+// Licensed Under: MIT License and APACHE License
+// Last Updated 1/29/2025
+// LastStraw Idiomatic GUI framework in Rust
+/*
+ __                              __       ______    __
+/  |                            /  |     /      \  /  |
+$$ |        ______    _______  _$$ |_   /$$$$$$  |_$$ |_     ______   ______   __   __   __
+$$ |       /      \  /       |/ $$   |  $$ \__$$// $$   |   /      \ /      \ /  | /  | /  |
+$$ |       $$$$$$  |/$$$$$$$/ $$$$$$/   $$      \$$$$$$/   /$$$$$$  |$$$$$$  |$$ | $$ | $$ |
+$$ |       /    $$ |$$      \   $$ | __  $$$$$$  | $$ | __ $$ |  $$/ /    $$ |$$ | $$ | $$ |
+$$ |_____ /$$$$$$$ | $$$$$$  |  $$ |/  |/  \__$$ | $$ |/  |$$ |     /$$$$$$$ |$$ \_$$ \_$$ |
+$$       |$$    $$ |/     $$/   $$  $$/ $$    $$/  $$  $$/ $$ |     $$    $$ |$$   $$   $$/
+$$$$$$$$/  $$$$$$$/ $$$$$$$/     $$$$/   $$$$$$/    $$$$/  $$/       $$$$$$$/  $$$$$/$$$$/
+
+*/
+// Feel free to contribute!
 
 use minifb::{Key, Window, WindowOptions};
 
+/// used to hold all the app infomation.
+/// Their should always be one mutatable variable with the precise name "app".
+/// This the App stuct to hold all of are current app window's
+/// infomation, i.e, size height,
+///  and some more that were needed from the minifb framework.
+/// A variable must be set with the impl of new.
 pub struct App {
     pub window: Window,
     pub buffer: Vec<u32>,
@@ -28,6 +50,11 @@ pub struct App {
     pub multi_line_storing: Vec<Vec<String>>, // each index matchs id, nut for each index of index, stands for a line of text
 }
 
+/// used to set a mutable variable with the name app to the App struct.
+/// The variable created is used to edit the app window in real time, within the asx loop.
+/// First argument is window height.
+/// Second argument is window width.
+/// Third argument is an &str of name of the program and window.
 impl App {
     pub fn new(width: usize, height: usize, title: &str) -> Self {
         let (window, buffer) = defined_window(width, height, title);
@@ -57,6 +84,7 @@ impl App {
     }
 }
 
+/// This fucntion defines a minfb window, it is used by App struct, to create a window, with settings
 pub fn defined_window(width: usize, height: usize, name: &str) -> (Window, Vec<u32>) {
     // Initialize the pixel buffer
     let buffer: Vec<u32> = vec![0; width * height];
@@ -68,22 +96,28 @@ pub fn defined_window(width: usize, height: usize, name: &str) -> (Window, Vec<u
         height,
         //WindowOptions::default(),
         WindowOptions {
-            resize: true,
+            resize: true, // this is important as it can mess with you application, making elements seam out of place.
             borderless: false,
             ..WindowOptions::default()
         },
     )
     .unwrap_or_else(|e| {
-        panic!("Unable to open window: {}", e);
+        panic!("Unable to open window: {}", e); // if you open an issue please include your operating system.
     });
 
     (window, buffer)
 }
 
+/// Function that you can use to close your app.
+/// Same as app.should_close = true, but more smaller.
 pub fn close(app: &mut App) {
     app.should_close = true;
 }
 
+/// Please, refer to this for the color map.
+/// Colors are in hexademical.
+/// For easy usage,
+/// you can just pass in a &str to get the hexademical.
 pub fn hex_color(name: &str) -> u32 {
     let new_color: u32 = match name {
         "Green" => 0xFF_00FF00,
@@ -133,6 +167,9 @@ pub fn hex_color(name: &str) -> u32 {
     new_color
 }
 
+/// You should use this to set the background, of the window.
+/// Tip make sure it as at the topmost of asx, so that it is the buttom layer.
+/// You could also use it to clear over elements called below it.
 pub fn set_window_color(app: &mut App, color: &str) {
     //TODO non hex code based system
     let new_color = hex_color(color);
@@ -144,6 +181,8 @@ pub fn set_window_color(app: &mut App, color: &str) {
 
 use std::{collections::HashMap, f64::RADIX};
 
+/// Refer to this when you need a key, as it is more ideomatic.
+/// Map of all the keys, in &str.
 pub fn string_to_key_hash_map<'a>() -> HashMap<&'a str, Key> {
     let key_mappings: HashMap<&str, Key> = [
         ("esc", Key::Escape),
@@ -236,6 +275,7 @@ pub fn string_to_key_hash_map<'a>() -> HashMap<&'a str, Key> {
     key_mappings
 }
 
+/// used in input's to use the hash map acordingly, or flip.
 pub fn key_to_string_hash_map<'a>() -> HashMap<Key, &'a str> {
     let flipped_mappings: HashMap<Key, &str> = string_to_key_hash_map()
         .into_iter()
@@ -245,6 +285,8 @@ pub fn key_to_string_hash_map<'a>() -> HashMap<Key, &'a str> {
     flipped_mappings
 }
 
+/// Method for checking for if the user has pressed, a key.
+/// Returns bool true, if the key is pressed.
 pub fn input_pressed(app: &App, key: &str) -> bool {
     let key_mappings = string_to_key_hash_map();
     if let Some(&minifb_key) = key_mappings.get(key) {
@@ -254,6 +296,7 @@ pub fn input_pressed(app: &App, key: &str) -> bool {
     }
 }
 
+/// Used in interactable text element, to check for multiple keys pressed.
 pub fn keys_down<F>(app: &App, handle_key: F)
 where
     F: Fn(&minifb::Key),
@@ -265,7 +308,7 @@ where
 }
 
 /*
-//TODO window Scrolling LATER
+//TODO window Scrolling
 pub fn handle_mouse_scroll_event_asx(scroll: f64) {
     let scroll_str = scroll.to_string();
 
@@ -278,6 +321,12 @@ pub fn handle_mouse_scroll_event_asx(scroll: f64) {
 use rusttype::{point, Font, Scale};
 const FONT_BYTES: &[u8] = include_bytes!("../assets/fonts/FiraSans-Regular.ttf"); // always having font loaded in package
 
+/// Simple struct for readability and ideomatic, on elements.
+/// used for setting location of a element on the screen.
+/// Made up of X: Height, Y: Weight, and Scale.
+/// All are floats, as these are rough positions on screen
+/// Methods requiring Postition can be used by writing out this struct, or using
+/// the position!() macro.
 #[derive(Clone)]
 pub struct Position {
     pub x: f32,
@@ -285,6 +334,12 @@ pub struct Position {
     pub scale: f32,
 }
 
+/// First argument is a declared App stuct.
+/// Second argument is a stuct called position,
+/// it is made up of X: Height, Y: Weight, and Scale, deciding were the ui is placed.
+/// Third argument is a &str, with the message,
+/// displayed on the string. This does not take user input,
+/// but only displays some text.
 pub fn single_line_text(app: &mut App, position: Position, text: &str) {
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
@@ -310,6 +365,7 @@ pub fn single_line_text(app: &mut App, position: Position, text: &str) {
     }
 }
 
+/// Method used for drawing text, with the font, in other Methods namely Interactable text.
 pub fn rasterize_text(
     font: &Font<'_>,
     line: &str,
@@ -334,6 +390,11 @@ pub fn rasterize_text(
 }
 
 // TODO custom color, TODO move blinker with arrow keys, and highlighting
+/// Element used for drawing multiple lines of text.
+/// First argument is a declared App stuct.
+/// Second argument is a stuct called position, it is made up of X: Height, Y: Weight, and Scale, deciding were the ui is placed.
+/// Third argument, are the lines of text, each index a line, stored in a Vec<&str>
+
 pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Vec<&str>) {
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
@@ -350,6 +411,8 @@ pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Ve
     }
 }
 
+/// Verison of multiline text expecting a string for a thrid argument, as teh message.
+/// Namly used in Interactable text for less borrowing.
 pub fn multi_line_text_owned(app: &mut App, position: Position, spacing: f32, text: Vec<String>) {
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
@@ -365,6 +428,7 @@ pub fn multi_line_text_owned(app: &mut App, position: Position, spacing: f32, te
     }
 }
 
+/// Simple method used namely in Interactable text, for drawing a box.
 pub fn draw_rectangle(
     buffer: &mut Vec<u32>,
     width: usize,
@@ -392,13 +456,9 @@ pub fn draw_rectangle(
     }
 }
 
-/* // can also each can be used for any position args
-Position {
-    x: 80.0,
-    y: 80.0,
-    scale: 30.0,
-},
-*/
+/// Used for Idiomatics, for less work when asigning a position arugment
+/// Takes three floats. X: height, Y: width, and Scale: scale, all as floats.
+/// Note it is less readable then just declaring a new Position struct.
 #[macro_export]
 macro_rules! position {
     ($x:expr, $y:expr, $scale:expr) => {
@@ -410,14 +470,19 @@ macro_rules! position {
     };
 }
 
+/// Method used in layering the positioning of elements.
+/// Impacted in asx
 pub fn set_next_button(app: &mut App, position: Position) {
     app.next_button_position = position;
 }
 
+/// Sets the text for the next button.
+/// The button most close when reading down.
 pub fn set_next_button_text(app: &mut App, text: &str) {
     app.next_button_text = text.to_string();
 }
 
+/// Used in other methods, namely in Interactable text, and button for drawing a box.
 pub fn calculate_button_text_dimensions(font: &Font, text: &str, scale: Scale) -> (f32, f32) {
     let glyphs: Vec<_> = font.layout(text, scale, point(0.0, 0.0)).collect();
 
@@ -441,6 +506,7 @@ pub fn calculate_button_text_dimensions(font: &Font, text: &str, scale: Scale) -
 }
 
 // TODO better method, and hot-reloading
+/// Unfinished function, to be used in hot-reloading
 pub fn dev_mode() -> bool {
     #[cfg(debug_assertions)]
     {
@@ -455,6 +521,7 @@ pub fn dev_mode() -> bool {
     }
 }
 
+/// Used in other Methods/Elements for drawing boxes.
 pub fn draw_box(
     app: &mut App,
     position: Position,
@@ -478,7 +545,14 @@ use minifb::{CursorStyle, KeyRepeat};
 
 //TODO caps
 //TODO password protected function
-// TODO highlight or no highlight, also handling text overflow
+// TODO highlight or no highlight
+// TODO custom color, TODO move blinker with arrow keys, and highlighting
+/// Used for getting multi or single line text input, from users.
+/// First argument is the declared App stuct, from outside asx.
+/// Second is a macro declaring a position struct, Hight, Width, Scale.
+/// The text seen before any text is enter by user.
+/// Color from color table, refered to at end of docs, or laststraw_core.
+/// If the element would only accept single line, false, means single line only.
 pub fn editable_lines(
     app: &mut App,
     position: Position,
@@ -697,6 +771,10 @@ pub fn editable_lines(
     }
 }
 
+/// Note: this is optional, and used to reduce CPU usage for much heavy apps, with many elements.
+/// Tip: between 60-30, is okay.
+/// First argument is the declared App stuct, from outside asx.
+/// Second argument is the max frames per a second.
 pub fn limit_fps(app: &mut App, fps: f32) {
     if fps > 1.0 {
         app.window

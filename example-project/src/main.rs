@@ -1,16 +1,17 @@
 use laststraw::*;
 
 fn main() {
-    let mut app = App::new(500, 500, "test");
+    let mut app = App::new(500, 500, "test"); // must be sole variable with the name app
 
     asx!({
         set_window_color(&mut app, "Obsidian"); // is layored so this is back
 
         if input_pressed(&app, "esc") {
-            app.should_close = true;
+            app.should_close = true; // closes window
         }
 
         if input_pressed(&app, "space") {
+            // on space
             single_line_text(&mut app, position!(20.0, 20.0, 40.0), "You pressed space");
         }
 
