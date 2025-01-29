@@ -9,11 +9,21 @@ members = [
 
 ]
 
-[workspace.dependencies] # Not useful
-laststraw-core = { path = "packages/core" }
-laststraw-core-macro = { path = "packages/core-macro" }
+[workspace.package]
+version = "0.0.1" # internal crates need to follow this!
+edition = "2021"
 
 [dependencies]
+freetype-rs = "0.37.0"
+minifb = "0.27.0"
+rusttype = "0.9.3"
+fs = "0.0.5"
+quote = "1.0.38"
+syn = { version = "2.0.92", features = ["full"] }
+#laststraw-core = { workspace = true }
+#laststraw-core-macro = { workspace = true }
+
+[workspace.dependencies]
 laststraw-core = { path = "packages/core" }
 laststraw-core-macro = { path = "packages/core-macro" }
 
@@ -23,9 +33,6 @@ opt-level = 1
 [profile.release]
 opt-level = 3
 #rustflags = ["-C", "target-cpu=native"]
-
-[workspace.package]
-version = "0.0.1"
 
 [lib]
 path = "src/lib.rs"

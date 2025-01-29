@@ -293,8 +293,12 @@ dependencies = [
 name = "laststraw"
 version = "0.1.0"
 dependencies = [
- "laststraw-core",
- "laststraw-core-macro",
+ "freetype-rs",
+ "fs",
+ "minifb",
+ "quote",
+ "rusttype",
+ "syn",
 ]
 
 [[package]]
@@ -308,7 +312,7 @@ dependencies = [
 
 [[package]]
 name = "laststraw-core-macro"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "fs",
  "laststraw-core",
