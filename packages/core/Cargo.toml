@@ -1,14 +1,19 @@
 [package]
 name = "laststraw-core"
-version.workspace = true
+version = "0.1.0"                                                               # Replace with the version you want to publish
 edition = "2021"
+authors = ["Hadrian Lazic"]
+description = "Core library for the lightweight GUI Rust framework Last-Straw."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/had2020/Last-Straw"
+keywords = ["framework", "rust", "gui"]
+categories = ["gui", "rendering"]
+homepage = "https://github.com/had2020/Last-Straw"
 
 [lib]
 path = "src/lib.rs"
-#proc-macro = true
 
 [dependencies]
 freetype-rs = "0.37.0"
 minifb = "0.27.0"
 rusttype = "0.9.3"
-#laststraw-core-macro= { path = "../core-macro" } no longer needed

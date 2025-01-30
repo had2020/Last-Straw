@@ -1,7 +1,14 @@
 [package]
 name = "laststraw-core-macro"
-version.workspace = true
+version = "0.1.0"                                                                    # Replace with the version you want to publish
 edition = "2021"
+authors = ["Hadrian Lazic"]
+description = "Procedural macros for the lightweight GUI Rust framework Last-Straw."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/had2020/Last-Straw"
+keywords = ["macro", "proc-macro", "rust", "gui"]
+categories = ["codegen", "development-tools::macro"]
+homepage = "https://github.com/had2020/Last-Straw"
 
 [lib]
 path = "src/lib.rs"
@@ -9,7 +16,7 @@ proc-macro = true
 
 [dependencies]
 fs = "0.0.5"
-laststraw-core = { path = "../core" }
+laststraw-core = "0.1.0"                          # Use the version published on crates.io
 quote = "1.0.38"
 rusttype = "0.9.3"
 syn = { version = "2.0.92", features = ["full"] }
