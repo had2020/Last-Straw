@@ -295,6 +295,8 @@ version = "0.1.0"
 dependencies = [
  "freetype-rs",
  "fs",
+ "laststraw-core",
+ "laststraw-core-macro",
  "minifb",
  "quote",
  "rusttype",

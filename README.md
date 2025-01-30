@@ -10,11 +10,11 @@
 Ideomatic Simple GUI framework with only Minifb and Freetype-sys
 
 ## How to run example project
-firstly this libary depends on the developer installing freetype2 
+firstly this libary depends on the developer installing freetype2
 
-Installing SYSTEM freetype package for rust
+Installing SYSTEM freetype package for rust.
 - macos
-  ``` 
+  ```
   brew install freetype
   ```
 - Linux
@@ -25,21 +25,43 @@ Installing SYSTEM freetype package for rust
   Note you will likely need to use GNUWin32 to compile!
   Read: https://github.com/PistonDevelopers/freetype-sys?tab=readme-ov-file for more
 
-Running the example 
-  Cloning repo
+Installing the Crate.
+``` bash
+cargo add laststraw
 ```
-git clone https://github.com/had2020/Last-Straw.git
-```
-Then run the example project, INSIDE the example-project folder
-```
-cargo run
+
+``` rust
+use laststraw::*;
+
+fn main() {
+    let mut app = App::new(500, 500, "test"); // app variable, must be only a single one named app, which is mutable.
+
+    asx!({ // runs every frame while, app.should_close == false.
+        single_line_text(&mut app, position!(20.0, 20.0, 40.0), "Hello"); // shows Hello on the screen
+
+        set_next_button(&mut app, position!(30.0, 30.0, 30.0)); // maybe wrap as struct
+        set_next_button_text(&mut app, "helq");
+        button!({
+            single_line_text(
+                &mut app,
+                position!(20.0, 20.0, 40.0),
+                "You clicked the button",
+            );
+            println!("Button press logged!");
+        });
+    });
+
+    println!("app closed after window code."); // last line of code, like in a normal rust program, EVEN if the user exited with exit button.
+    // FAILS only if force exit by task manager alike program.
+}
+
 ```
 
 ## How it works
 # Main Parts
 - App | stuct
-  
-firstly, I use the App stuct to hold all of are current app window's infomation, i.e, size height, and some more that were needed from the minifb framework. 
+
+firstly, I use the App stuct to hold all of are current app window's infomation, i.e, size height, and some more that were needed from the minifb framework.
 A variable must be set with the name app and the impl of new. Just like the code seen below.
 ``` rust
 let mut app = App::new(500, 500, "test");
@@ -61,14 +83,14 @@ Gui elements are layered as they are declared, the lowest is at the top.
 For example multi_line_text(), would be furtherest to the back.
 ``` rust
 asx!({
-  set_window_color(&mut app, "Obsidian"); // undermost layer 
-  
+  set_window_color(&mut app, "Obsidian"); // undermost layer
+
   let lines: Vec<&str> = vec!["Apple fruit", "Banana", "Cherry pie", "Oreos"];
   multi_line_text(&mut app, position!(100.0, 100.0, 50.0), 50.0, lines); // topmost layer
 })
 ```
 
-# Position Struct 
+# Position Struct
 used for setting location of a element on the screen.
 Made up of X: Height, Y: Weight, and Scale.
 
@@ -76,22 +98,22 @@ You can make one the position macro as seen below, or just write out the stuct f
 ``` rust
 position!(20.0, 20.0, 40.0)
 ```
-OR 
+OR
 ``` rust
 Position { x: 10.0, y: 10.0, scale: 50.0, }
 ```
-for readablity 
+for readablity
 
 # Text Elements
-if app variables are updated, then we need to own a mut borrow, &mut app. 
-Other's only borrow ownership like checking for input_pressed(). 
+if app variables are updated, then we need to own a mut borrow, &mut app.
+Other's only borrow ownership like checking for input_pressed().
 
 - single_line_text
-  
+
 1. First argument is a declared App stuct.
 2. The second argument is a stuct called position, it is made up of X: Height, Y: Weight, and Scale, deciding were the ui is placed.
 3. The third argument is a &str, with the message, displayed on the string.
-   This does not take user input, but only displays some text. 
+   This does not take user input, but only displays some text.
 ``` rust
 single_line_text(&mut app, position!(20.0, 20.0, 40.0), "You pressed space");
 ```
@@ -139,7 +161,7 @@ let texty: String = editable_lines(
 TIP make sure this is the futherest back, because it writes over the whole screen buffer.
 Sets the color of the background.
 ``` rust
-set_window_color(&mut app, "Obsidian"); 
+set_window_color(&mut app, "Obsidian");
 ```
 
 # Limit fps to reduce CPU usage if needed
@@ -367,11 +389,11 @@ fn main() {
 
 ## Why / Project statement
 I took lots of inspiration from Rust Frameworks like Dioxus and Tauri Frameworks.
-The main problem for my with these frameworks, is that desktop apps, acted like mini web browsers. 
+The main problem for my with these frameworks, is that desktop apps, acted like mini web browsers.
 
-This meant I had to tailer my code to not interact with the hardware, like a website, with static files. I just needed a framework that had buttons and multiline text to enter and display. Just something to make a basic text editer. 
+This meant I had to tailer my code to not interact with the hardware, like a website, with static files. I just needed a framework that had buttons and multiline text to enter and display. Just something to make a basic text editer.
 
-I like the features of Iced, but I wanted a more light CPU, based framework. That could also be cross compatible. I also wanted easy to read variable names, as once someone learns them, they can just macrofi them. 
+I like the features of Iced, but I wanted a more light CPU, based framework. That could also be cross compatible. I also wanted easy to read variable names, as once someone learns them, they can just macrofi them.
 
 I also wished it to be easyer for people new to Rust to be able to make Apps.
 As I belive people like projects they can see rendered on their screen more.
