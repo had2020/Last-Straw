@@ -26,6 +26,7 @@ Installing SYSTEM freetype package for rust.
   Read: https://github.com/PistonDevelopers/freetype-sys?tab=readme-ov-file for more
 
 Installing the Crate.
+
 ``` bash
 cargo add laststraw
 ```
@@ -55,6 +56,14 @@ fn main() {
     // FAILS only if force exit by task manager alike program.
 }
 
+```
+Make sure to add dependencies in Cargo.toml
+``` bash
+cargo add freetype-rs@0.37.0
+cargo add minifb@0.27.0
+cargo add rusttype@0.9.3
+cargo add quote@1.0.38
+cargo add syn@2.0.92 --features full
 ```
 
 ## How it works
