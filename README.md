@@ -138,6 +138,15 @@ let lines: Vec<&str> = vec!["Apple fruit", "Banana", "Cherry pie", "Oreos"]; // 
 multi_line_text(&mut app, position!(100.0, 100.0, 50.0), 50.0, lines); // lines needs index in a Vec<&str>
 ```
 
+# Button Element 
+Proc Macro which only runs the code inside one clicked.
+Similar to asx!
+``` rust
+button!({
+  println!("button is pressed");
+});
+```
+
 # Interactable text
 1. First argument is the declared App stuct, from outside asx.
 2. Second is a macro declaring a position struct, Hight, Width, Scale.
