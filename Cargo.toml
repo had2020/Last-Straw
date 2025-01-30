@@ -20,7 +20,7 @@ path = "src/lib.rs"
 
 [package]
 name = "laststraw"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Hadrian Lazic"]
 description = "A lightweight GUI Rust framework for quick desktop applications."
