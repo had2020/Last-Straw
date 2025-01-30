@@ -7,7 +7,7 @@ description = "Procedural macros for the lightweight GUI Rust framework Last-Str
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/had2020/Last-Straw"
 keywords = ["macro", "proc-macro", "rust", "gui"]
-categories = ["codegen", "development-tools::macro"]
+categories = ["gui", "rendering"]
 homepage = "https://github.com/had2020/Last-Straw"
 
 [lib]
