@@ -9,6 +9,9 @@
 
 Ideomatic Simple GUI framework with only Minifb and Freetype-sys
 
+# See Github for Up To Date Docs, feel free to leave a star ⭐️
+- https://github.com/had2020/Last-Straw
+
 ## How to run example project
 firstly this libary depends on the developer installing freetype2
 
@@ -138,7 +141,7 @@ let lines: Vec<&str> = vec!["Apple fruit", "Banana", "Cherry pie", "Oreos"]; // 
 multi_line_text(&mut app, position!(100.0, 100.0, 50.0), 50.0, lines); // lines needs index in a Vec<&str>
 ```
 
-# Button Element 
+# Button Element
 Proc Macro which only runs the code inside one clicked.
 Similar to asx!
 ``` rust
@@ -162,6 +165,17 @@ let texty: String = editable_lines(
     "Blue", // color of the boarder.
     false, // if you wish for only single line input.
 );
+```
+
+# Changing initial Interactable text
+place before a Interactable text element to set initial text,
+which stays after clicking the element.
+``` rust
+pub fn set_next_input_init_text(app: &mut App, init_text: &str) {
+    if app.already_set_initial_text == true {
+        app.multi_line_storing[app.current_text_edit_id][1] = init_text.to_string();
+    }
+}
 ```
 
 #  Input checking
@@ -422,3 +436,4 @@ Hopfully, this project makes some dev happy to keep their rust app low level.
 Since, this is my first published crate framework, I expect their might be bugs.
 Feel free to open an issue or anything, if you belive you can do the code better.
 I would love to learn any new ideas, to make this framework better!
+
