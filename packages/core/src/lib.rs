@@ -577,7 +577,7 @@ pub fn editable_lines(
     let last_line = app.multi_line_storing[app.selected_text_edit_id].len() - 1;
     //println!("{},", last_line); // Debugging
 
-    let mut line_text = app.multi_line_storing[app.selected_text_edit_id - 1][last_line].clone();
+    let mut line_text = app.multi_line_storing[app.selected_text_edit_id][last_line].clone();
 
     //println!("PREmls: {:?}", app.multi_line_storing); //[last_line]);
 
