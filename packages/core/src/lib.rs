@@ -81,6 +81,7 @@ impl App {
                 vec![String::new(), String::new()],
             ],
             on_blinker: true,
+            unedited_button: true,
         }
     }
 }
@@ -670,6 +671,7 @@ pub fn editable_lines(
             app.selected_text_edit_id = app.current_text_edit_id;
         }
     } else {
+        app.unedited_button = false;
         // selected
         app.window.set_cursor_style(CursorStyle::Ibeam);
 

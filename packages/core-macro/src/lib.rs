@@ -19,6 +19,10 @@ pub fn asx(input: TokenStream) -> TokenStream {
 
             let mut last_window_size = app.window.get_size();
 
+            if app.selected_text_edit_id == 0 {
+                app.unedited_button = false;
+            }
+
             let mut _generated_block_wrapper = || {
 
                 while app.window.is_open() && !app.should_close {
