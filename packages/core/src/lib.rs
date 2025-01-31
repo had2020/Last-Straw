@@ -48,7 +48,7 @@ pub struct App {
     //pub input_text_storing: Vec<String>, // each index correlates to selected_text_edit_id assigned via calling sequence
     pub on_blinker: bool, // cycles on and off, on text element
     pub multi_line_storing: Vec<Vec<String>>, // each index matchs id, nut for each index of index, stands for a line of text
-    pub unedited_button: bool,                // used to set text to initial_text, if never edited
+    pub already_set_initial_text: bool,
 }
 
 /// used to set a mutable variable with the name app to the App struct.
@@ -75,13 +75,12 @@ impl App {
             next_button_text: String::from(""),
             current_text_edit_id: 0,
             selected_text_edit_id: 0,
-            //input_text_storing: vec![String::new(), String::new()],
             multi_line_storing: vec![
                 vec![String::new(), String::new()],
                 vec![String::new(), String::new()],
             ],
             on_blinker: true,
-            unedited_button: true,
+            already_set_initial_text: false,
         }
     }
 }
@@ -661,18 +660,12 @@ pub fn editable_lines(
             }
 
             position_iterator.y += 50.0; //* (position_iterator.scale / 10.0); TODO!
-
-            if app.unedited_button {
-                app.multi_line_storing[app.selected_text_edit_id - 1] =
-                    vec![initial_text.to_string()];
-            }
         }
 
         if button_pressed {
             app.selected_text_edit_id = app.current_text_edit_id;
         }
     } else {
-        app.unedited_button = false;
         // selected
         app.window.set_cursor_style(CursorStyle::Ibeam);
 
@@ -789,5 +782,11 @@ pub fn limit_fps(app: &mut App, fps: f32) {
             .limit_update_rate(Some(std::time::Duration::from_secs_f32(1.0 / fps)));
     } else {
         eprintln!("limit_fps(), fps set too low.")
+    }
+}
+
+pub fn set_next_input_init_text(app: &mut App, init_text: &str) {
+    if app.already_set_initial_text == true {
+        app.multi_line_storing[app.current_text_edit_id][1] = init_text.to_string();
     }
 }
