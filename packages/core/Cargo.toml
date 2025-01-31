@@ -1,6 +1,6 @@
 [package]
 name = "laststraw-core"
-version = "0.1.6"                                                               # Replace with the version you want to publish
+version = "0.1.7"                                                               # Replace with the version you want to publish
 edition = "2021"
 authors = ["Hadrian Lazic"]
 description = "Core library for the lightweight GUI Rust framework Last-Straw."
