@@ -662,9 +662,8 @@ pub fn editable_lines(
             position_iterator.y += 50.0; //* (position_iterator.scale / 10.0); TODO!
 
             if app.unedited_button {
-                app.multi_line_storing[] = initial_text;
+                app.multi_line_storing[app.selected_text_edit_id - 1] = initial_text;
             }
-            app.multi_line_storing[] = initial_text;
         }
 
         if button_pressed {
