@@ -574,7 +574,7 @@ pub fn editable_lines(
     let selected = app.selected_text_edit_id == app.current_text_edit_id && !none_selected;
     let non_empty_position = position.x != 0.0 && position.y != 0.0 && position.scale != 0.0;
 
-    let last_line = app.multi_line_storing[app.selected_text_edit_id - 1].len() - 1;
+    let last_line = app.multi_line_storing[app.selected_text_edit_id].len() - 1;
     //println!("{},", last_line); // Debugging
 
     let mut line_text = app.multi_line_storing[app.selected_text_edit_id - 1][last_line].clone();
