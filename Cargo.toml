@@ -5,8 +5,8 @@ rusttype = "0.9.3"
 fs = "0.0.5"
 quote = "1.0.38"
 syn = { version = "2.0.92", features = ["full"] }
-laststraw-core = "0.1.2"
-laststraw-core-macro = "0.1.7"
+laststraw-core = "0.1.7"
+laststraw-core-macro = "0.1.0"
 
 [profile.dev]
 opt-level = 1

@@ -296,9 +296,9 @@ dependencies = [
 
 [[package]]
 name = "laststraw-core"
-version = "0.1.1"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6137da2228e6f81f8d79e73bc2b1a2ecb07fda1ed4cb18571cf56af1652a2f41"
+checksum = "a57f66714ff74cdc2eb13d7a77bda42b93af62a5d9edada6ef48e2a9ed84b407"
 dependencies = [
  "freetype-rs",
  "minifb",
