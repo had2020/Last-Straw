@@ -48,6 +48,7 @@ pub struct App {
     //pub input_text_storing: Vec<String>, // each index correlates to selected_text_edit_id assigned via calling sequence
     pub on_blinker: bool, // cycles on and off, on text element
     pub multi_line_storing: Vec<Vec<String>>, // each index matchs id, nut for each index of index, stands for a line of text
+    pub unedited_button: bool,                // used to set text to initial_text, if never edited
 }
 
 /// used to set a mutable variable with the name app to the App struct.
@@ -572,10 +573,10 @@ pub fn editable_lines(
     let selected = app.selected_text_edit_id == app.current_text_edit_id && !none_selected;
     let non_empty_position = position.x != 0.0 && position.y != 0.0 && position.scale != 0.0;
 
-    let last_line = app.multi_line_storing[app.selected_text_edit_id].len() - 1;
+    let last_line = app.multi_line_storing[app.selected_text_edit_id - 1].len() - 1;
     //println!("{},", last_line); // Debugging
 
-    let mut line_text = app.multi_line_storing[app.selected_text_edit_id][last_line].clone();
+    let mut line_text = app.multi_line_storing[app.selected_text_edit_id - 1][last_line].clone();
 
     //println!("PREmls: {:?}", app.multi_line_storing); //[last_line]);
 
@@ -659,6 +660,11 @@ pub fn editable_lines(
             }
 
             position_iterator.y += 50.0; //* (position_iterator.scale / 10.0); TODO!
+
+            if app.unedited_button {
+                app.multi_line_storing[] = initial_text;
+            }
+            app.multi_line_storing[] = initial_text;
         }
 
         if button_pressed {
