@@ -664,7 +664,7 @@ pub fn editable_lines(
 
             if app.unedited_button {
                 app.multi_line_storing[app.selected_text_edit_id - 1] =
-                    Vec![initial_text.to_string()];
+                    vec![initial_text.to_string()];
             }
         }
 
