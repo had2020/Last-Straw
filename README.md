@@ -9,24 +9,31 @@
 
 Ideomatic Simple GUI framework with only Minifb and Freetype-sys
 
-# See Github for Up To Date Docs, feel free to leave a star ⭐️
+# See Github for Up To Date Docs
+Enjoyed the project? Leaving a Star means the world ⭐️
 - https://github.com/had2020/Last-Straw
 
 ## How to run example project
 firstly this libary depends on the developer installing freetype2
 
 Installing SYSTEM freetype package for rust.
-- macos
+- macos 🍎
   ```
   brew install freetype
   ```
-- Linux
+- Linux 🐧
   ```
   sudo apt-get install libfreetype6-dev
   ```
-- Windows
+- Windows 🪟
+  
   Note you will likely need to use GNUWin32 to compile!
   Read: https://github.com/PistonDevelopers/freetype-sys?tab=readme-ov-file for more
+  
+  Or with the Choco package manager 
+  ``` bash
+  choco install freetype
+  ```
 
 Installing the Crate.
 
