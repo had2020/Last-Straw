@@ -16,7 +16,7 @@ proc-macro = true
 
 [dependencies]
 fs = "0.0.5"
-laststraw-core = "0.1.0"                          # Use the version published on crates.io
+laststraw = { git = "https://github.com/had2020/Last-Straw", branch = "tests", subdir = "packages/core-macro" }
 quote = "1.0.38"
 rusttype = "0.9.3"
 syn = { version = "2.0.92", features = ["full"] }

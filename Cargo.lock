@@ -286,7 +286,7 @@ version = "0.1.6"
 dependencies = [
  "freetype-rs",
  "fs",
- "laststraw-core",
+ "laststraw-core 0.2.1",
  "laststraw-core-macro",
  "minifb",
  "quote",
@@ -306,13 +306,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "laststraw-core"
+version = "0.2.1"
+source = "git+https://github.com/had2020/Last-Straw?branch=tests#f7f7d51242909e5b51857e34ec7437538bae6f75"
+dependencies = [
+ "freetype-rs",
+ "minifb",
+ "rusttype",
+]
+
+[[package]]
 name = "laststraw-core-macro"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "495351919fdce6e9c3f55f24b9f1f024ccbb12f1ce866ed4345b90ff608ae1ea"
+source = "git+https://github.com/had2020/Last-Straw?branch=tests#f7f7d51242909e5b51857e34ec7437538bae6f75"
 dependencies = [
  "fs",
- "laststraw-core",
+ "laststraw-core 0.1.7",
  "quote",
  "rusttype",
  "syn",

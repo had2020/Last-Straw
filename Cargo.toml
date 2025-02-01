@@ -5,8 +5,8 @@ rusttype = "0.9.3"
 fs = "0.0.5"
 quote = "1.0.38"
 syn = { version = "2.0.92", features = ["full"] }
-laststraw-core = "0.1.7"
-laststraw-core-macro = "0.1.0"
+laststraw-core = { git = "https://github.com/had2020/Last-Straw", branch = "tests", subdir = "packages/core" }
+laststraw-core-macro = { git = "https://github.com/had2020/Last-Straw", branch = "tests", subdir = "packages/core-macro" }
 
 [profile.dev]
 opt-level = 1
@@ -20,7 +20,7 @@ path = "src/lib.rs"
 
 [package]
 name = "laststraw"
-version = "0.1.6"
+version = "0.1.6"                                                                #⚠️ TESTING, don't update ever!
 edition = "2021"
 authors = ["Hadrian Lazic"]
 description = "A lightweight GUI Rust framework for quick desktop applications."
