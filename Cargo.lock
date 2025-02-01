@@ -282,11 +282,11 @@ dependencies = [
 
 [[package]]
 name = "laststraw"
-version = "0.1.7"
+version = "0.1.8"
 dependencies = [
  "freetype-rs",
  "fs",
- "laststraw-core 0.2.1",
+ "laststraw-core 0.2.2",
  "laststraw-core-macro",
  "minifb",
  "quote",
@@ -307,9 +307,9 @@ dependencies = [
 
 [[package]]
 name = "laststraw-core"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b96f5a99ae228f647af486bde93ec338a784b9e1f4a8e12309834820649ee3a"
+checksum = "33bf81cb7db7cd23915ec6f83dac0ff880a0e2095211b444f2cda052bd4aba06"
 dependencies = [
  "freetype-rs",
  "minifb",
