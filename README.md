@@ -16,21 +16,21 @@ Enjoyed the project? Leaving a Star means the world ⭐️
 ## How to run example project
 firstly this libary depends on the developer installing freetype2
 
-Installing SYSTEM freetype package for rust.
-- macos 🍎
+Installing C library freetype in package manager for 🦀 Rust.
+- $ macos 🍎
   ```
   brew install freetype
   ```
-- Linux 🐧
+- $ Linux 🐧
   ```
   sudo apt-get install libfreetype6-dev
   ```
-- Windows 🪟
+- $ Windows 🪟
   
-  Note you will likely need to use GNUWin32 to compile!
+  📝 Note: you will likely need to use GNUWin32 to compile, or someother package manager like Choco!
   Read: https://github.com/PistonDevelopers/freetype-sys?tab=readme-ov-file for more
   
-  Or with the Choco package manager 
+  Or with the Choco package manager.
   ``` bash
   choco install freetype
   ```
@@ -50,7 +50,7 @@ fn main() {
     asx!({ // runs every frame while, app.should_close == false.
         single_line_text(&mut app, position!(20.0, 20.0, 40.0), "Hello"); // shows Hello on the screen
 
-        set_next_button(&mut app, position!(30.0, 30.0, 30.0)); // maybe wrap as struct
+        set_next_button(&mut app, position!(30.0, 30.0, 30.0)); // this code is layer dependent
         set_next_button_text(&mut app, "helq");
         button!({
             single_line_text(
@@ -242,140 +242,143 @@ fn main() {
 
 ```
 
-## Key Table
-| Symbol | Key Mapping |
-|--------|------------|
-| esc    | Key::Escape |
-| 1      | Key::Key1  |
-| 2      | Key::Key2  |
-| 3      | Key::Key3  |
-| 4      | Key::Key4  |
-| 5      | Key::Key5  |
-| 6      | Key::Key6  |
-| 7      | Key::Key7  |
-| 8      | Key::Key8  |
-| 9      | Key::Key9  |
-| 0      | Key::Key0  |
-| a      | Key::A     |
-| b      | Key::B     |
-| c      | Key::C     |
-| d      | Key::D     |
-| e      | Key::E     |
-| f      | Key::F     |
-| g      | Key::G     |
-| h      | Key::H     |
-| i      | Key::I     |
-| j      | Key::J     |
-| k      | Key::K     |
-| l      | Key::L     |
-| m      | Key::M     |
-| n      | Key::N     |
-| o      | Key::O     |
-| p      | Key::P     |
-| q      | Key::Q     |
-| r      | Key::R     |
-| s      | Key::S     |
-| t      | Key::T     |
-| u      | Key::U     |
-| v      | Key::V     |
-| w      | Key::W     |
-| x      | Key::X     |
-| y      | Key::Y     |
-| z      | Key::Z     |
-| space  | Key::Space |
-| enter  | Key::Enter |
-| tab    | Key::Tab   |
-| backspace | Key::Backspace |
-| left   | Key::Left  |
-| right  | Key::Right |
-| up     | Key::Up    |
-| down   | Key::Down  |
-| left_shift  | Key::LeftShift  |
-| right_shift | Key::RightShift |
-| left_ctrl   | Key::LeftCtrl   |
-| right_ctrl  | Key::RightCtrl  |
-| left_alt    | Key::LeftAlt    |
-| right_alt   | Key::RightAlt   |
-| ;      | Key::Semicolon  |
-| '      | Key::Apostrophe |
-| ,      | Key::Comma      |
-| .      | Key::Period     |
-| /      | Key::Slash      |
-| backslash   | Key::Backslash  |
-| left_bracket | Key::LeftBracket  |
-| right_bracket | Key::RightBracket |
-| -      | Key::Minus      |
-| +      | Key::Equal      |
-| caps_lock   | Key::CapsLock   |
-| scroll_lock | Key::ScrollLock |
-| num_lock    | Key::NumLock    |
-| pause       | Key::Pause      |
-| insert      | Key::Insert     |
-| home        | Key::Home       |
-| page_up     | Key::PageUp     |
-| delete      | Key::Delete     |
-| end         | Key::End        |
-| page_down   | Key::PageDown   |
-| f1  | Key::F1  |
-| f2  | Key::F2  |
-| f3  | Key::F3  |
-| f4  | Key::F4  |
-| f5  | Key::F5  |
-| f6  | Key::F6  |
-| f7  | Key::F7  |
-| f8  | Key::F8  |
-| f9  | Key::F9  |
-| f10 | Key::F10 |
-| f11 | Key::F11 |
-| f12 | Key::F12 |
+## 🔑 Key Table
+| 🔣 Symbol       | 🖮 Key Mapping        |
+|-----------------|-----------------------|
+| ⎋ esc           | `Key::Escape`         |
+| 1️⃣ 1            | `Key::Key1`           |
+| 2️⃣ 2            | `Key::Key2`           |
+| 3️⃣ 3            | `Key::Key3`           |
+| 4️⃣ 4            | `Key::Key4`           |
+| 5️⃣ 5            | `Key::Key5`           |
+| 6️⃣ 6            | `Key::Key6`           |
+| 7️⃣ 7            | `Key::Key7`           |
+| 8️⃣ 8            | `Key::Key8`           |
+| 9️⃣ 9            | `Key::Key9`           |
+| 0️⃣ 0            | `Key::Key0`           |
+| 🅰️ a             | `Key::A`              |
+| 🅱️ b             | `Key::B`              |
+| 🇨 c             | `Key::C`              |
+| 🇩 d             | `Key::D`              |
+| 🇪 e             | `Key::E`              |
+| 🇫 f             | `Key::F`              |
+| 🇬 g             | `Key::G`              |
+| 🇭 h             | `Key::H`              |
+| 🇮 i             | `Key::I`              |
+| 🇯 j             | `Key::J`              |
+| 🇰 k             | `Key::K`              |
+| 🇱 l             | `Key::L`              |
+| 🇲 m             | `Key::M`              |
+| 🇳 n             | `Key::N`              |
+| 🇴 o             | `Key::O`              |
+| 🅿️ p             | `Key::P`              |
+| 🇶 q             | `Key::Q`              |
+| 🇷 r             | `Key::R`              |
+| 🇸 s             | `Key::S`              |
+| 🇹 t             | `Key::T`              |
+| 🇺 u             | `Key::U`              |
+| 🇻 v             | `Key::V`              |
+| 🇼 w             | `Key::W`              |
+| ❎ x             | `Key::X`              |
+| 🇾 y             | `Key::Y`              |
+| 🇿 z             | `Key::Z`              |
+| ␣ space         | `Key::Space`          |
+| ↵ enter         | `Key::Enter`          |
+| ⇥ tab           | `Key::Tab`            |
+| ⌫ backspace     | `Key::Backspace`      |
+| ◀️ left           | `Key::Left`           |
+| ▶️ right          | `Key::Right`          |
+| 🔼 up            | `Key::Up`             |
+| 🔽 down          | `Key::Down`           |
+| ⇧ left_shift     | `Key::LeftShift`      |
+| ⇧ right_shift    | `Key::RightShift`     |
+| ⌃ left_ctrl      | `Key::LeftCtrl`       |
+| ⌃ right_ctrl     | `Key::RightCtrl`      |
+| ⎇ left_alt       | `Key::LeftAlt`        |
+| ⎇ right_alt      | `Key::RightAlt`       |
+| 🔢 ;             | `Key::Semicolon`      |
+| 🖋️ '              | `Key::Apostrophe`     |
+| 🥒 ,              | `Key::Comma`          |
+| .               | `Key::Period`         |
+| ➗ /              | `Key::Slash`          |
+| ⬛ backslash     | `Key::Backslash`      |
+| 🗂️ left_bracket  | `Key::LeftBracket`    |
+| 📂 right_bracket | `Key::RightBracket`   |
+| ➖ -              | `Key::Minus`          |
+| ➕ +              | `Key::Equal`          |
+| 🔒 caps_lock     | `Key::CapsLock`       |
+| 🛑 scroll_lock   | `Key::ScrollLock`     |
+| 🔢 num_lock      | `Key::NumLock`        |
+| ⏸️ pause         | `Key::Pause`          |
+| 🖋️ insert        | `Key::Insert`         |
+| 🏠 home          | `Key::Home`           |
+| 📄 page_up       | `Key::PageUp`         |
+| 🗑️ delete         | `Key::Delete`         |
+| 🏁 end           | `Key::End`            |
+| 📉 page_down     | `Key::PageDown`       |
+| 🔈 f1            | `Key::F1`             |
+| 🎛️ f2            | `Key::F2`             |
+| 🔢 f3            | `Key::F3`             |
+| 🔢 f4            | `Key::F4`             |
+| 🔢 f5            | `Key::F5`             |
+| 🔢 f6            | `Key::F6`             |
+| 🔢 f7            | `Key::F7`             |
+| 🔢 f8            | `Key::F8`             |
+| 🔢 f9            | `Key::F9`             |
+| 🔢 f10           | `Key::F10`            |
+| 🔢 f11           | `Key::F11`            |
+| 🔢 f12           | `Key::F12`            |
 
 
-## Color Table
-| Color Name            | Hex Code    |
-|-----------------------|------------|
-| Green                | 0xFF00FF00  |
-| Red                  | 0xFFFF0000  |
-| Blue                 | 0xFF0000FF  |
-| Yellow               | 0xFFFFFF00  |
-| Cyan                 | 0xFF00FFFF  |
-| Magenta              | 0xFFFF00FF  |
-| White                | 0xFFFFFFFF  |
-| Black                | 0xFF000000  |
-| Gray                 | 0xFF808080  |
-| Orange               | 0xFFFFA500  |
-| Purple               | 0xFF800080  |
-| Pink                 | 0xFFFFC0CB  |
-| Brown                | 0xFFA52A2A  |
-| Light Gray           | 0xFFD3D3D3  |
-| Light Blue           | 0xFFADD8E6  |
-| Dark Blue            | 0xFF00008B  |
-| Beige                | 0xFFF5F5DC  |
-| Teal                 | 0xFF008080  |
-| Lavender             | 0xFFE6E6FA  |
-| Ivory                | 0xFFFFFFF0  |
-| Mint                 | 0xFF98FF98  |
-| Coral                | 0xFFFF7F50  |
-| Navy                 | 0xFF000080  |
-| Sky Blue             | 0xFF87CEEB  |
-| Sea Green            | 0xFF2E8B57  |
-| Forest Green         | 0xFF228B22  |
-| Dark Gray            | 0xFFA9A9A9  |
-| Slate Gray           | 0xFF708090  |
-| Charcoal             | 0xFF36454F  |
-| Jet Black            | 0xFF343434  |
-| Gunmetal             | 0xFF2A3439  |
-| Dark Slate Blue      | 0xFF483D8B  |
-| Midnight Blue        | 0xFF191970  |
-| Deep Navy            | 0xFF1B1F3B  |
-| Dark Olive Green     | 0xFF556B2F  |
-| Deep Forest Green    | 0xFF1A2E1A  |
-| Maroon               | 0xFF800000  |
-| Deep Burgundy        | 0xFF4A0000  |
-| Dark Chocolate       | 0xFF3E2723  |
-| Dark Copper          | 0xFF4E3629  |
-| Onyx                 | 0xFF353839  |
-| Obsidian             | 0xFF1C1C1C  |
-| **Default (Invalid)** | 0xFFFFC0CB  |
+## 🎨 **Color Table**
+
+| **Color Name**        | **Hex Code**      |
+|-----------------------|--------------------|
+| Green 🟢               | `0xFF00FF00`       |
+| Red 🔴                 | `0xFFFF0000`       |
+| Blue 🔵                | `0xFF0000FF`       |
+| Yellow 🟡              | `0xFFFFFF00`       |
+| Cyan 🟦                | `0xFF00FFFF`       |
+| Magenta 💖            | `0xFFFF00FF`       |
+| White ⚪               | `0xFFFFFFFF`       |
+| Black ⚫               | `0xFF000000`       |
+| Gray 🩶                | `0xFF808080`       |
+| Orange 🟠              | `0xFFFFA500`       |
+| Purple 🟣              | `0xFF800080`       |
+| Pink 🌸                | `0xFFFFC0CB`       |
+| Brown 🟤               | `0xFFA52A2A`       |
+| Light Gray 🪶          | `0xFFD3D3D3`       |
+| Light Blue 🌊          | `0xFFADD8E6`       |
+| Dark Blue 🏴‍☠️         | `0xFF00008B`       |
+| Beige 🤎               | `0xFFF5F5DC`       |
+| Teal 🐠                | `0xFF008080`       |
+| Lavender 🌾            | `0xFFE6E6FA`       |
+| Ivory 🏛️              | `0xFFFFFFF0`       |
+| Mint 🌿                | `0xFF98FF98`       |
+| Coral 🐚               | `0xFFFF7F50`       |
+| Navy ⚓                | `0xFF000080`       |
+| Sky Blue ☁️           | `0xFF87CEEB`       |
+| Sea Green 🌊           | `0xFF2E8B57`       |
+| Forest Green 🌲        | `0xFF228B22`       |
+| Dark Gray 🖤           | `0xFFA9A9A9`       |
+| Slate Gray 🏔️         | `0xFF708090`       |
+| Charcoal 🏭            | `0xFF36454F`       |
+| Jet Black 🕶️          | `0xFF343434`       |
+| Gunmetal 🔫            | `0xFF2A3439`       |
+| Dark Slate Blue 🌌     | `0xFF483D8B`       |
+| Midnight Blue 🌃       | `0xFF191970`       |
+| Deep Navy 🛳️          | `0xFF1B1F3B`       |
+| Dark Olive Green 🌿    | `0xFF556B2F`       |
+| Deep Forest Green 🌳   | `0xFF1A2E1A`       |
+| Maroon 🍷              | `0xFF800000`       |
+| Deep Burgundy 🍇       | `0xFF4A0000`       |
+| Dark Chocolate 🍫      | `0xFF3E2723`       |
+| Dark Copper 🏺         | `0xFF4E3629`       |
+| Onyx 💎               | `0xFF353839`       |
+| Obsidian 🌋           | `0xFF1C1C1C`       |
+| **Default (Invalid)**  | `0xFFFFC0CB`       |
+
+
 
 
 ## Example project, Element showcase
@@ -400,7 +403,7 @@ fn main() {
         let lines: Vec<&str> = vec!["Apple fruit", "Banana", "Cherry pie", "Oreos"];
         multi_line_text(&mut app, position!(100.0, 100.0, 50.0), 50.0, lines);
 
-        set_next_button(&mut app, position!(30.0, 30.0, 30.0)); // maybe wrap as struct
+        set_next_button(&mut app, position!(30.0, 30.0, 30.0)); 
         set_next_button_text(&mut app, "helq");
         button!({
             single_line_text(
@@ -426,7 +429,7 @@ fn main() {
 }
 ```
 
-## Why / Project statement
+## Why / Project statement 📝
 I took lots of inspiration from Rust Frameworks like Dioxus and Tauri Frameworks.
 The main problem for my with these frameworks, is that desktop apps, acted like mini web browsers.
 
@@ -437,10 +440,9 @@ I like the features of Iced, but I wanted a more light CPU, based framework. Tha
 I also wished it to be easyer for people new to Rust to be able to make Apps.
 As I belive people like projects they can see rendered on their screen more.
 
-Hopfully, this project makes some dev happy to keep their rust app low level.
+Hopfully, this project makes some dev happy to keep their Rust app low level.
 
-## Contributing
+## Contributing 💪
 Since, this is my first published crate framework, I expect their might be bugs.
 Feel free to open an issue or anything, if you belive you can do the code better.
 I would love to learn any new ideas, to make this framework better!
-
