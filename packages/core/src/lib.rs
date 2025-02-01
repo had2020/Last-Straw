@@ -816,8 +816,8 @@ pub fn following_input_initial_lines(app: &mut App, initial_lines: Vec<&str>) {
     if app.already_set_initial_text == false {
         let mut line_iteration: usize = 0;
         for line in initial_lines {
-            line_iteration += 1;
             app.multi_line_storing[app.current_text_edit_id + 1][line_iteration] = line.to_string();
+            line_iteration += 1;
         }
         app.already_set_initial_text = true;
     }

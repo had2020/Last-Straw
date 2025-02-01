@@ -225,7 +225,7 @@ dependencies = [
 
 [[package]]
 name = "laststraw-core"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "freetype-rs",
  "minifb",
