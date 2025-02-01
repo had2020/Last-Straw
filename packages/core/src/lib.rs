@@ -22,6 +22,12 @@ $$$$$$$$/  $$$$$$$/ $$$$$$$/     $$$$/   $$$$$$/    $$$$/  $$/       $$$$$$$/  $
 //#[warn(unused_imports)] // for the hashmap
 use minifb::{Key, Window, WindowOptions};
 
+/// debug log the version
+pub fn log_version() {
+    let version: &str = "2.2.1";
+    println!("Version: ");
+}
+
 /// used to hold all the app infomation.
 /// Their should always be one mutatable variable with the precise name "app".
 /// This the App stuct to hold all of are current app window's
