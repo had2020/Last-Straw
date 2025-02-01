@@ -9,7 +9,8 @@
 
 Ideomatic Simple GUI framework with only Minifb and Freetype-sys
 
-# See Github for Up To Date Docs, feel free to leave a star ⭐️
+# See Github for Up To Date Docs
+feel free to leave a star ⭐️
 - https://github.com/had2020/Last-Straw
 
 ## How to run example project
