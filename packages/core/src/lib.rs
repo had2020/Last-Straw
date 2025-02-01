@@ -1,6 +1,6 @@
 // By: Hadrian Lazic
 // Licensed Under: MIT License and APACHE License
-// Last Updated 1/29/2025
+// Last Updated 2/1/2025
 // LastStraw Idiomatic GUI framework in Rust
 /*
  __                              __       ______    __
@@ -16,6 +16,10 @@ $$$$$$$$/  $$$$$$$/ $$$$$$$/     $$$$/   $$$$$$/    $$$$/  $$/       $$$$$$$/  $
 */
 // Feel free to contribute!
 
+#[warn(unused_variables)]
+#[warn(unused_mut)]
+// the warnings will be removed in the future
+//#[warn(unused_imports)] // for the hashmap
 use minifb::{Key, Window, WindowOptions};
 
 /// used to hold all the app infomation.
@@ -180,12 +184,12 @@ pub fn set_window_color(app: &mut App, color: &str) {
     }
 }
 
-use std::{collections::HashMap, f64::RADIX};
+//use std::{collections::HashMap, f64::RADIX};
 
 /// Refer to this when you need a key, as it is more ideomatic.
 /// Map of all the keys, in &str.
-pub fn string_to_key_hash_map<'a>() -> HashMap<&'a str, Key> {
-    let key_mappings: HashMap<&str, Key> = [
+pub fn string_to_key_hash_map<'a>() -> std::collections::HashMap<&'a str, Key> {
+    let key_mappings: std::collections::HashMap<&str, Key> = [
         ("esc", Key::Escape),
         ("1", Key::Key1),
         ("2", Key::Key2),
@@ -277,8 +281,8 @@ pub fn string_to_key_hash_map<'a>() -> HashMap<&'a str, Key> {
 }
 
 /// used in input's to use the hash map acordingly, or flip.
-pub fn key_to_string_hash_map<'a>() -> HashMap<Key, &'a str> {
-    let flipped_mappings: HashMap<Key, &str> = string_to_key_hash_map()
+pub fn key_to_string_hash_map<'a>() -> std::collections::HashMap<Key, &'a str> {
+    let flipped_mappings: std::collections::HashMap<Key, &str> = string_to_key_hash_map()
         .into_iter()
         .map(|(key, value)| (value, key))
         .collect();
@@ -395,7 +399,6 @@ pub fn rasterize_text(
 /// First argument is a declared App stuct.
 /// Second argument is a stuct called position, it is made up of X: Height, Y: Weight, and Scale, deciding were the ui is placed.
 /// Third argument, are the lines of text, each index a line, stored in a Vec<&str>
-
 pub fn multi_line_text(app: &mut App, position: Position, spacing: f32, text: Vec<&str>) {
     let font_data = FONT_BYTES;
     let font = Font::try_from_bytes(font_data).expect("Error loading font");
@@ -548,6 +551,7 @@ use minifb::{CursorStyle, KeyRepeat};
 //TODO password protected function
 // TODO highlight or no highlight
 // TODO custom color, TODO move blinker with arrow keys, and highlighting
+
 /// Used for getting multi or single line text input, from users.
 /// First argument is the declared App stuct, from outside asx.
 /// Second is a macro declaring a position struct, Hight, Width, Scale.
@@ -717,21 +721,29 @@ pub fn editable_lines(
             }
         }
 
-        // backspace, char deletion
+        // char adding
         if letter_input_checked && !backspace {
             let last_stored_text = &line_text;
             line_text = format!("{}{}", last_stored_text, string_set_id_index);
             letter_input_checked = false;
-            //
+
+        // backspace, char deletion
         } else if letter_input_checked && backspace {
+            let mut already_removed_line = false;
             let mut full_current_text: String = line_text.clone();
-            if full_current_text.len() < 1
-                && app.multi_line_storing[app.selected_text_edit_id].len() > 2
-            {
-                app.multi_line_storing[app.selected_text_edit_id].pop();
-                line_removed = true;
+
+            if full_current_text.is_empty() {
+                if !already_removed_line
+                    && app.multi_line_storing[app.selected_text_edit_id].len() > 2
+                {
+                    app.multi_line_storing[app.selected_text_edit_id].pop();
+                    already_removed_line = true;
+                    line_removed = true;
+                }
+            } else {
+                full_current_text.pop();
             }
-            full_current_text.pop();
+
             line_text = full_current_text;
             backspace = false;
             letter_input_checked = false;
@@ -785,8 +797,22 @@ pub fn limit_fps(app: &mut App, fps: f32) {
     }
 }
 
-pub fn set_next_input_init_text(app: &mut App, init_text: &str) {
-    if app.already_set_initial_text == true {
-        app.multi_line_storing[app.current_text_edit_id][1] = init_text.to_string();
+/// Set the first line of the following interactable text element, to a &str
+pub fn following_input_initial_line(app: &mut App, initial_line: &str) {
+    if app.already_set_initial_text == false {
+        app.multi_line_storing[app.current_text_edit_id + 1][1] = initial_line.to_string();
+        app.already_set_initial_text = true;
+    }
+}
+
+/// Sets the initial lines in the following interactable text element, to vec of &strs,
+pub fn following_input_initial_lines(app: &mut App, initial_lines: Vec<&str>) {
+    if app.already_set_initial_text == false {
+        let mut line_iteration: usize = 0;
+        for line in initial_lines {
+            line_iteration += 1;
+            app.multi_line_storing[app.current_text_edit_id + 1][line_iteration] = line.to_string();
+        }
+        app.already_set_initial_text = true;
     }
 }
