@@ -804,7 +804,7 @@ pub fn limit_fps(app: &mut App, fps: f32) {
 }
 
 /// Set the first line of the following interactable text element, to a &str
-pub fn following_input_initial_line(app: &mut App, initial_line: &str) {
+pub fn following_input_initial_text(app: &mut App, initial_line: &str) {
     if app.already_set_initial_text == false {
         app.multi_line_storing[app.current_text_edit_id + 1][1] = initial_line.to_string();
         app.already_set_initial_text = true;
