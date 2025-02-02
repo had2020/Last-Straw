@@ -22,12 +22,6 @@ $$$$$$$$/  $$$$$$$/ $$$$$$$/     $$$$/   $$$$$$/    $$$$/  $$/       $$$$$$$/  $
 //#[warn(unused_imports)] // for the hashmap
 use minifb::{Key, Window, WindowOptions};
 
-/// debug log the version
-pub fn log_version() {
-    let version: &str = "2.2.4";
-    println!("Version: {}", version);
-}
-
 /// used to hold all the app infomation.
 /// Their should always be one mutatable variable with the precise name "app".
 /// This the App stuct to hold all of are current app window's
@@ -811,19 +805,16 @@ pub fn following_input_initial_text(app: &mut App, initial_line: &str) {
     }
 }
 
-/*
-for line in initial_lines.iter() {
-    //line_iteration += 1;
-    //app.multi_line_storing[app.current_text_edit_id + 1][line_iteration] = line.to_string();
-    //app.multi_line_storing[app.current_text_edit_id + 1][1] = line.to_string();
-}
-*/
-
 /// Sets the initial lines in the following interactable text element, to vec of &strs,
 pub fn following_input_initial_lines(app: &mut App, initial_lines: Vec<&str>) {
     if !app.already_set_initial_text {
-        let mut line_iteration: usize = 0;
-        println!("Initial lines length: {}", initial_lines.len());
+        for (i, line) in initial_lines.iter().enumerate() {
+            if i + 1 < app.multi_line_storing[app.current_text_edit_id + 1].len() {
+                app.multi_line_storing[app.current_text_edit_id + 1][i + 1].push_str(line);
+            } else {
+                app.multi_line_storing[app.current_text_edit_id + 1].push(line.to_string());
+            }
+        }
         app.already_set_initial_text = true;
     }
 }
