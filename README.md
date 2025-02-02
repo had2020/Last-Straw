@@ -26,10 +26,10 @@ Installing C library freetype in package manager for 🦀 Rust.
   sudo apt-get install libfreetype6-dev
   ```
 - $ Windows 🪟
-  
+
   📝 Note: you will likely need to use GNUWin32 to compile, or someother package manager like Choco!
   Read: https://github.com/PistonDevelopers/freetype-sys?tab=readme-ov-file for more
-  
+
   Or with the Choco package manager.
   ``` bash
   choco install freetype
@@ -172,6 +172,17 @@ let texty: String = editable_lines(
     "Blue", // color of the boarder.
     false, // if you wish for only single line input.
 );
+```
+
+# Setting the initial in following/next Interactable text
+- for setting multi_lines
+``` rust
+let lines = vec!["one", "two", "three"]; // example &str list, each line is an index
+following_input_initial_lines(&mut app, lines);
+```
+- for setting a single line
+``` rust
+following_input_initial_text(&mut app, "just a line here"); // you can use both for just a line, but this is easier
 ```
 
 # Changing initial Interactable text
@@ -403,7 +414,7 @@ fn main() {
         let lines: Vec<&str> = vec!["Apple fruit", "Banana", "Cherry pie", "Oreos"];
         multi_line_text(&mut app, position!(100.0, 100.0, 50.0), 50.0, lines);
 
-        set_next_button(&mut app, position!(30.0, 30.0, 30.0)); 
+        set_next_button(&mut app, position!(30.0, 30.0, 30.0));
         set_next_button_text(&mut app, "helq");
         button!({
             single_line_text(
