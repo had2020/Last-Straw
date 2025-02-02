@@ -174,7 +174,7 @@ let texty: String = editable_lines(
 );
 ```
 
-# Setting the initial in following/next Interactable text
+# Setting the initial text in following/next Interactable text
 - for setting multi_lines
 ``` rust
 let lines = vec!["one", "two", "three"]; // example &str list, each line is an index
