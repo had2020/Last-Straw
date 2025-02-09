@@ -2,12 +2,14 @@
 
 ![MSRV](https://img.shields.io/badge/Rust%20MSRV-1.78.0-brightgreen)
 [![crates.io](https://img.shields.io/crates/v/laststraw.svg)](https://crates.io/crates/laststraw/0.1.0)
-[![docs.rs](https://docs.rs/laststraw/badge.svg)](https://docs.rs/laststraw)
 [![Downloads](https://img.shields.io/crates/d/laststraw.svg)](https://crates.io/crates/laststraw)
 
-
-
 Ideomatic Simple GUI framework with only Minifb and Freetype-sys
+
+### Showcase Projects
+
+- Text Editer
+[FnEditer](https://github.com/had2020/FnEditor) 
 
 # See Github for Up To Date Docs
 Enjoyed the project? Leaving a Star means the world ⭐️
